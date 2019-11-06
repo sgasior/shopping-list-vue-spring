@@ -7,7 +7,7 @@ import pl.edu.kopalniakodu.web.model.TaskDto;
 @Mapper
 public interface TaskMapper {
 
-    TaskDto TaskToTaskDto(Task task);
+    TaskDto taskToTaskDto(Task task);
 
-    Task TaskDtoToTask(TaskDto dto);
+    Task taskDtoToTask(TaskDto dto);
 }

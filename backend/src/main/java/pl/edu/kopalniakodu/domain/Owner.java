@@ -32,8 +32,7 @@ public class Owner {
 
     @OneToMany(
             fetch = FetchType.EAGER,
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            cascade = CascadeType.ALL
     )
     @JoinColumn(name = "owner_id")
     private Set<Task> tasks = new LinkedHashSet<>();
