@@ -74,7 +74,8 @@ public class OwnerService {
     }
 
     public void update(Owner owner, OwnerDto updatedOwner) {
-        owner.setName(updatedOwner.getName());
+        updatedOwner.setId(owner.getId());
+        owner = ownerMapper.ownerDtoToOwner(updatedOwner);
         ownerRepository.save(owner);
     }
 

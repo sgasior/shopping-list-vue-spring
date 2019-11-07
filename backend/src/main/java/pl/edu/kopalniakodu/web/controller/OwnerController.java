@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.kopalniakodu.domain.Owner;
 import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
-import pl.edu.kopalniakodu.exceptions.OwnerUpdateException;
 import pl.edu.kopalniakodu.service.OwnerService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
@@ -49,9 +48,6 @@ public class OwnerController {
     ) {
         Owner owner = getOwnerEntityOptional(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(ownerId));
-        if (updatedOwner.getTasks() != null) {
-            throw new OwnerUpdateException("Owner cannot be updated using this request (consider removing tasks from body)");
-        }
         ownerService.update(owner, updatedOwner);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
