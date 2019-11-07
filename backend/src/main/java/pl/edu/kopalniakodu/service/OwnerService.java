@@ -2,7 +2,6 @@ package pl.edu.kopalniakodu.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import pl.edu.kopalniakodu.domain.Owner;
 import pl.edu.kopalniakodu.repository.OwnerRepository;
@@ -51,8 +50,7 @@ public class OwnerService {
     }
 
     public Optional<OwnerDto> findDtoById(String ownerId) {
-        UUID ownerUUID = UUID.fromString(ownerId);
-        Optional<Owner> ownerEntity = ownerRepository.findById(ownerUUID);
+        Optional<Owner> ownerEntity = getOwnerEntity(ownerId);
         if (!ownerEntity.isEmpty()) {
             return Optional.of(ownerMapper.ownerToOwnerDto(ownerEntity.get()));
         }
@@ -60,14 +58,12 @@ public class OwnerService {
     }
 
     public Optional<Owner> findById(String ownerId) {
-        UUID ownerUUID = UUID.fromString(ownerId);
-        Optional<Owner> ownerEntity = ownerRepository.findById(ownerUUID);
+        Optional<Owner> ownerEntity = getOwnerEntity(ownerId);
         if (!ownerEntity.isEmpty()) {
             return ownerEntity;
         }
         return Optional.empty();
     }
-
 
     public void delete(Owner owner) {
         ownerRepository.delete(owner);
@@ -77,12 +73,19 @@ public class OwnerService {
         ownerRepository.save(ownerMapper.ownerDtoToOwner(ownerDto));
     }
 
-
     public void update(Owner owner, OwnerDto updatedOwner) {
-        updatedOwner.setId(owner.getId());
-        BeanUtils.copyProperties(updatedOwner, owner);
+        owner.setName(updatedOwner.getName());
         ownerRepository.save(owner);
     }
 
+    private Optional<Owner> getOwnerEntity(String ownerId) {
+        UUID ownerUUID;
+        try {
+            ownerUUID = UUID.fromString(ownerId);
+        } catch (IllegalArgumentException ex) {
+            return Optional.empty();
+        }
+        return ownerRepository.findById(ownerUUID);
+    }
 
 }

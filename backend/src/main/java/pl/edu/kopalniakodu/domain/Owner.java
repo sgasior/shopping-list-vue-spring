@@ -1,8 +1,6 @@
 package pl.edu.kopalniakodu.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -14,6 +12,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@EqualsAndHashCode(exclude = {"tasks", "name"})
+@ToString(exclude = {"tasks", "id"})
 public class Owner {
 
     @Id
@@ -28,6 +28,7 @@ public class Owner {
         this.uuid = UUID.randomUUID();
     }*/
 
+    @NonNull
     private String name;
 
     @OneToMany(

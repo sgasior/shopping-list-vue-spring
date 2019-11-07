@@ -1,5 +1,6 @@
 package pl.edu.kopalniakodu.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
@@ -14,6 +15,8 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @RequiredArgsConstructor
+@EqualsAndHashCode(callSuper = true, exclude = {"products", "bill"})
+@ToString(exclude = {"products", "bill"})
 public class Task extends BaseEntity {
 
     @NonNull
@@ -21,6 +24,7 @@ public class Task extends BaseEntity {
     private String taskTitle;
 
     @NonNull
+    @JsonFormat(pattern = "yyyy-MM-dd")
     private Timestamp createdDate;
 
     @NonNull
@@ -38,6 +42,5 @@ public class Task extends BaseEntity {
     )
     @JoinColumn(name = "bill_id")
     private Bill bill;
-
 
 }

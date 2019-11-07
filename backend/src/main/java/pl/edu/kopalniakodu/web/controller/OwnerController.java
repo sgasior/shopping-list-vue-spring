@@ -7,9 +7,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.kopalniakodu.domain.Owner;
+import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
+import pl.edu.kopalniakodu.exceptions.OwnerUpdateException;
 import pl.edu.kopalniakodu.service.OwnerService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,16 +24,11 @@ public class OwnerController {
 
     private final OwnerService ownerService;
 
-    // example: http://localhost:8088/api/v1/owner/6d19d9bd-deef-4e3d-958d-4d63c8a0f077
     @GetMapping("/{ownerId}")
     public ResponseEntity<?> getOwner(@PathVariable("ownerId") String ownerId) {
-        Optional<OwnerDto> ownerOptional = getOwnerDtoOptional(ownerId);
-        if (ownerOptional.isEmpty()) {
-            return new ResponseEntity<>(
-                    "Unable to found. Owner with " + ownerId + " does not exists.",
-                    HttpStatus.NOT_FOUND);
-        }
-        return new ResponseEntity<>(ownerOptional.get(), HttpStatus.OK);
+        OwnerDto ownerDto = getOwnerDtoOptional(ownerId)
+                .orElseThrow(() -> new OwnerNotFoundException(ownerId));
+        return new ResponseEntity<>(ownerDto, HttpStatus.OK);
     }
 
     @GetMapping("")
@@ -39,7 +37,7 @@ public class OwnerController {
     }
 
     @PostMapping("")
-    public ResponseEntity<?> addOwner(@RequestBody OwnerDto ownerDto) {
+    public ResponseEntity<?> addOwner(@RequestBody @Valid OwnerDto ownerDto) {
         ownerService.add(ownerDto);
         return new ResponseEntity<>(ownerDto, HttpStatus.CREATED);
     }
@@ -47,27 +45,22 @@ public class OwnerController {
     @PutMapping("/{ownerId}")
     public ResponseEntity<?> updateOwner(
             @PathVariable("ownerId") String ownerId,
-            @RequestBody OwnerDto updatedOwner
+            @RequestBody @Valid OwnerDto updatedOwner
     ) {
-        Optional<Owner> ownerOptional = getOwnerOptional(ownerId);
-        if (ownerOptional.isEmpty()) {
-            return new ResponseEntity<>(
-                    "Unable to update. Owner with " + ownerId + " does not exists.",
-                    HttpStatus.NOT_FOUND);
+        Owner owner = getOwnerEntityOptional(ownerId)
+                .orElseThrow(() -> new OwnerNotFoundException(ownerId));
+        if (updatedOwner.getTasks() != null) {
+            throw new OwnerUpdateException("Owner cannot be updated using this request (consider removing tasks from body)");
         }
-        ownerService.update(ownerOptional.get(), updatedOwner);
+        ownerService.update(owner, updatedOwner);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @DeleteMapping("/{ownerId}")
     public ResponseEntity<?> deleteOwner(@PathVariable("ownerId") String ownerId) {
-        Optional<Owner> ownerOptional = getOwnerOptional(ownerId);
-        if (ownerOptional.isEmpty()) {
-            return new ResponseEntity<>(
-                    "Unable to delete. Owner with " + ownerId + " does not exists.",
-                    HttpStatus.NOT_FOUND);
-        }
-        ownerService.delete(ownerOptional.get());
+        Owner owner = getOwnerEntityOptional(ownerId)
+                .orElseThrow(() -> new OwnerNotFoundException(ownerId));
+        ownerService.delete(owner);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
     }
@@ -77,7 +70,7 @@ public class OwnerController {
                 .findDtoById(ownerId);
     }
 
-    private Optional<Owner> getOwnerOptional(String ownerId) {
+    private Optional<Owner> getOwnerEntityOptional(String ownerId) {
         return ownerService
                 .findById(ownerId);
     }
