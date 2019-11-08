@@ -7,11 +7,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import pl.edu.kopalniakodu.domain.Owner;
+import pl.edu.kopalniakodu.exceptions.ApiError;
 import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
+import pl.edu.kopalniakodu.exceptions.OwnerUpdateException;
 import pl.edu.kopalniakodu.service.OwnerService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
 import javax.validation.Valid;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -69,5 +72,18 @@ public class OwnerController {
     private Optional<Owner> getOwnerEntityOptional(String ownerId) {
         return ownerService
                 .findById(ownerId);
+    }
+
+
+    @ExceptionHandler(OwnerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public List<ApiError> ownerNotFoundExceptionHandler(OwnerNotFoundException ex) {
+        return Collections.singletonList(new ApiError("owner.notfound", ex.getMessage()));
+    }
+
+    @ExceptionHandler(OwnerUpdateException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public List<ApiError> OwnerUpdateExceptionHandler(OwnerUpdateException ex) {
+        return Collections.singletonList(new ApiError("update.bad_request", ex.getMessage()));
     }
 }

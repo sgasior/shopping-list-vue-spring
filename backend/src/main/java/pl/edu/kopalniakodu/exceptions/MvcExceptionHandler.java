@@ -20,21 +20,4 @@ public class MvcExceptionHandler {
         return new ResponseEntity<>(errorsList, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(OwnerUpdateException.class)
-    public ResponseEntity<?> OwnerUpdateExceptionHandler(OwnerUpdateException ex) {
-        return new ResponseEntity<>(
-                ex.getMessage(),
-                HttpStatus.BAD_REQUEST
-        );
-    }
-
-    @ExceptionHandler(OwnerNotFoundException.class)
-    public ResponseEntity<?> ownerNotFoundExceptionHandler(OwnerNotFoundException ex) {
-        return new ResponseEntity<>(
-                ex.getMessage(),
-                HttpStatus.NOT_FOUND
-        );
-    }
-
-
 }
