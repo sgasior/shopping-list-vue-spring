@@ -3,7 +3,6 @@ package pl.edu.kopalniakodu.web.model;
 import lombok.*;
 import pl.edu.kopalniakodu.domain.Bill;
 import pl.edu.kopalniakodu.domain.Product;
-import pl.edu.kopalniakodu.domain.Task;
 
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
@@ -33,9 +32,5 @@ public class TaskDto {
 
     LinkedHashSet<Product> products;
     private Bill bill;
-
-    public TaskDto(Task task) {
-
-    }
 
 }
