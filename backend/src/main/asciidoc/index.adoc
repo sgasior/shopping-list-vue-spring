@@ -1,0 +1,92 @@
+= Shopping list vue spring app
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc:
+Introduction
+This is Spring REST Docs generated documentation for Shopping List Vue Spring App
+
+
+= Owners
+
+`OwnerController` makes a call to a very simple service and produces five
+documentation snippets.
+
+== Read all owners
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/find-all-owners/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/find-all-owners/http-request.adoc[]
+
+=== Response
+
+HTTP response:
+
+include::{snippets}/v1/find-all-owners/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/find-all-owners/response-body.adoc[]
+
+== Read owner by id
+
+=== Request
+
+When making a  call to this API endpoint, the following request parameters and body can be expected.
+
+CURL request
+
+include::{snippets}/v1/find-one-shoould-return-owner/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/find-one-shoould-return-owner/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/find-one-shoould-return-owner/path-parameters.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/find-one-shoould-return-owner/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/find-one-shoould-return-owner/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/find-one-shoould-return-owner/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+When a owner with the given identifier isn’t found, a 404 Not Found is provided,
+with a different response containing an error message.
+
+CURL request when you trying to get  not existing owner.
+
+include::{snippets}/v1/find-one-owner-should-return-error-if-not-found/curl-request.adoc[]
+
+Http request when you trying to get  not existing owner.
+
+include::{snippets}/v1/find-one-owner-should-return-error-if-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/find-one-owner-should-return-error-if-not-found/path-parameters.adoc[]
+
+HTTP response when owner is not found.
+include::{snippets}/v1/find-one-owner-should-return-error-if-not-found/http-response.adoc[]
+
+Response Body when owner is not found.
+include::{snippets}/v1/find-one-owner-should-return-error-if-not-found/response-body.adoc[]
+
+Response Fields when owner is not found.
+include::{snippets}/v1/find-one-owner-should-return-error-if-not-found/response-fields.adoc[]
+
+
