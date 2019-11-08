@@ -1,6 +1,7 @@
 package pl.edu.kopalniakodu.web.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mockito;
@@ -15,11 +16,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import pl.edu.kopalniakodu.service.OwnerService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
@@ -32,7 +34,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ExtendWith(RestDocumentationExtension.class)
 @AutoConfigureRestDocs(uriPort = 8088)
 @WebMvcTest(OwnerController.class)
-class OwnerControlerTest {
+class OwnerControllerTest {
 
     private static final String OWNER_NAME_1 = "John";
     private static final String OWNER_NAME_2 = "Edd";
@@ -46,40 +48,31 @@ class OwnerControlerTest {
     @Autowired
     ObjectMapper objectMapper;
 
+    OwnerDto ownerDto_1;
+    OwnerDto ownerDto_2;
 
-
-/*    @BeforeEach
+    @BeforeEach
     public void init() {
-        task_1_dto = TaskDto.builder()
-                .taskTitle("Zakupy dla Szymka")
-                .bill(new Bill(BilanceType.INCOME, new BigDecimal("123")))
-                .createdDate(new Timestamp(System.currentTimeMillis()))
-                .isDone(false)
-                .products(new LinkedHashSet<Product>(Arrays.asList(new Product("Chleb"), new Product("Mleko"), new Product("Pomidory"))))
+
+        ownerDto_1 = OwnerDto
+                .builder()
+                .id(UUID.randomUUID())
+                .name(OWNER_NAME_1)
                 .build();
 
+        ownerDto_2 = OwnerDto
+                .builder()
+                .id(UUID.randomUUID())
+                .name(OWNER_NAME_2)
+                .build();
 
-        task1 = new Task("Zakupy dla Szymka",
-                new Timestamp(System.currentTimeMillis())
-                , false
-        );
-        task1.setBill(new Bill(BilanceType.INCOME, new BigDecimal("123")));
-        task1.setProducts(new LinkedHashSet<Product>(Arrays.asList(
-                new Product("Chleb"),
-                new Product("Mleko"),
-                new Product("Pomidory")
-        )));
-    }*/
+    }
 
     @Test
     public void findOneShoouldReturnOwner() throws Exception {
 
         Mockito.when(ownerService.findDtoById(anyString()))
-                .thenReturn(Optional.of(OwnerDto
-                        .builder()
-                        .id(UUID.randomUUID())
-                        .name(OWNER_NAME_1)
-                        .build()));
+                .thenReturn(Optional.of(ownerDto_1));
 
         mockMvc.perform(get("/api/v1/owner/{ownerId}", UUID.randomUUID().toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -116,26 +109,7 @@ class OwnerControlerTest {
     @Test
     public void findAllOwners() throws Exception {
 
-        List<OwnerDto> ownerDtoList = new ArrayList<>();
-        ownerDtoList.add(OwnerDto
-                .builder()
-                .id(UUID.randomUUID())
-                .name(OWNER_NAME_1)
-                .build());
-
-//        Arrays.asList(
-//                OwnerDto
-//                        .builder()
-//                        .id(UUID.randomUUID())
-//                        .name(OWNER_NAME_1)
-//                        .build(),
-//                OwnerDto
-//                        .builder()
-//                        .id(UUID.randomUUID())
-//                        .name(OWNER_NAME_2)
-//                        .build()
-//        );
-
+        List<OwnerDto> ownerDtoList = Arrays.asList(ownerDto_1,ownerDto_2);
         Mockito.when(ownerService.findAllOwners()).thenReturn(ownerDtoList);
 
         mockMvc.perform(get("/api/v1/owner")
