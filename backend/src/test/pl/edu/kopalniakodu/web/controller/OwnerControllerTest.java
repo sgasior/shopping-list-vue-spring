@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
@@ -18,7 +19,9 @@ import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.web.servlet.MockMvc;
+import pl.edu.kopalniakodu.domain.Owner;
 import pl.edu.kopalniakodu.service.OwnerService;
+import pl.edu.kopalniakodu.web.mapper.OwnerMapper;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
 import java.util.Arrays;
@@ -34,8 +37,7 @@ import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
@@ -46,6 +48,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureRestDocs(uriPort = 8088)
 @WebMvcTest(OwnerController.class)
 @Log4j2
+@ComponentScan(basePackages = "pl.edu.kopalniakodu.web.mapper")
 class OwnerControllerTest {
 
     private static final String OWNER_NAME_1 = "John";
@@ -59,6 +62,9 @@ class OwnerControllerTest {
 
     @Autowired
     ObjectMapper objectMapper;
+
+    @Autowired
+    OwnerMapper ownerMapper;
 
     OwnerDto ownerDto_1;
     OwnerDto ownerDto_2;
@@ -184,6 +190,81 @@ class OwnerControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void updateOwnerShouldReturnOwnerDtoInBodyResponse() throws Exception {
+
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
+        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedOwner))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").doesNotExist())
+                .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), ownerResponseFieldsSnippet(), ownerPathParametersSnippet()));
+    }
+
+    @Test
+    public void updateOwnerShouldReturnErrorWhenNameIsEmpty() throws Exception {
+
+        ownerDto_1.setName("");
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
+        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedOwner))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+    }
+
+    @Test
+    public void updateOwnerShouldReturnErrorWhenNameIsNull() throws Exception {
+
+        ownerDto_1.setName(null);
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
+        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedOwner))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+    }
+
+    @Test
+    public void updateOwnerShouldReturnErrorWhenNameIsTooShort() throws Exception {
+
+        ownerDto_1.setName("ab");
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
+        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedOwner))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+    }
+
+    @Test
+    public void updateOwnerShouldReturnErrorWhenNameIsToLong() throws Exception {
+
+        ownerDto_1.setName("TO_LOOOOOOOOOOOOOOONG_NAME");
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
+        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedOwner))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
 

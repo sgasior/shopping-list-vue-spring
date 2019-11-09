@@ -28,7 +28,6 @@ public class Owner {
         this.uuid = UUID.randomUUID();
     }*/
 
-    @NonNull
     private String name;
 
     @OneToMany(

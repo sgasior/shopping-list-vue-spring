@@ -7,6 +7,14 @@ Introduction
 This is Spring REST Docs generated documentation for Shopping List Vue Spring App
 
 
+//************************ GET *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
 = Owners
 
 `OwnerController` makes a call to a very simple service and produces five
@@ -96,6 +104,14 @@ Response Fields when owner is not found.
 include::{snippets}/v1/find-one-owner-should-return-error-if-not-found/response-fields.adoc[]
 
 
+//************************ POST *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
 == Save owner
 When making a  call to this API endpoint, the following request parameters and body can be expected.
 
@@ -162,7 +178,93 @@ include::{snippets}/v1/add-owner-should-return-error-when-name-is-null/response-
 
 Rest responses bodies which can occur when wrong api call is done:
 
-include::{snippets}/v1/add-owner-should-return-error-when-name-is-empty/response-body.adoc[]
+
 include::{snippets}/v1/add-owner-should-return-error-when-name-is-to-long/response-body.adoc[]
+
+
+//************************ PUT *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
+== Update owner
+When making a  call to this API endpoint, the following request parameters and body can be expected.
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/request-body.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/path-parameters.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/request-fields.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/update-owner-should-return-owner-dto-in-body-response/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+Example of wrong api call:
+
+CURL request:
+
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/request-body.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/path-parameters.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/request-fields.adoc[]
+
+HTTP response:
+
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/response-body.adoc[]
+
+Response Fields :
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-to-long/response-fields.adoc[]
+
+
+Rest responses bodies which can occur when wrong api call is done:
+
+
+include::{snippets}/v1/update-owner-should-return-error-when-name-is-null/response-body.adoc[]
 
 
