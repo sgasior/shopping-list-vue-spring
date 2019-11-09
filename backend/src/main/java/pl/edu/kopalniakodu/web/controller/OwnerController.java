@@ -3,6 +3,7 @@ package pl.edu.kopalniakodu.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,7 +36,10 @@ public class OwnerController {
 
     @GetMapping("")
     public ResponseEntity<List<OwnerDto>> getOwners() {
-        return new ResponseEntity<>(ownerService.findAllOwners(), HttpStatus.OK);
+        List<OwnerDto> owners = ownerService.findAllOwners();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("X-Owners-Total", Integer.toString(owners.size()));
+        return new ResponseEntity<>(owners, headers, HttpStatus.OK);
     }
 
     @PostMapping("")
