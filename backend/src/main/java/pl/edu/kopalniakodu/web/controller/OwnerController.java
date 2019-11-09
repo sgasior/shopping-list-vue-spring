@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.*;
 import pl.edu.kopalniakodu.domain.Owner;
 import pl.edu.kopalniakodu.exceptions.ApiError;
 import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
-import pl.edu.kopalniakodu.exceptions.OwnerUpdateException;
 import pl.edu.kopalniakodu.service.OwnerService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
@@ -85,9 +84,4 @@ public class OwnerController {
         return Collections.singletonList(new ApiError("owner.notfound", ex.getMessage()));
     }
 
-    @ExceptionHandler(OwnerUpdateException.class)
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public List<ApiError> OwnerUpdateExceptionHandler(OwnerUpdateException ex) {
-        return Collections.singletonList(new ApiError("update.bad_request", ex.getMessage()));
-    }
 }
