@@ -55,7 +55,7 @@ public class OwnerController {
         Owner owner = getOwnerEntityOptional(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(ownerId));
         ownerService.update(owner, updatedOwner);
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }
 
     @DeleteMapping("/{ownerId}")
