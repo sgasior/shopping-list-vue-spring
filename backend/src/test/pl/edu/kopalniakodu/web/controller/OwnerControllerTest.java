@@ -267,6 +267,48 @@ class OwnerControllerTest {
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
+    @Test
+    public void updateOwnerShouldReturnErrorIfNotFound() throws Exception {
+
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.empty());
+        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
+        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", "-1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedOwner))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+    }
+
+    @Test
+    public void deleteOwner() throws Exception {
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.doNothing().when(ownerService).delete(any(Owner.class));
+
+        mockMvc.perform(delete("/api/v1/owner/{ownerId}", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andDo(document("v1/{method-name}",
+                        ownerPathParametersSnippet()));
+
+    }
+
+    @Test
+    public void deleteOwnerShouldReturnErrorIfNotFound() throws Exception {
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.empty());
+        Mockito.doNothing().when(ownerService).delete(any(Owner.class));
+
+        mockMvc.perform(delete("/api/v1/owner/{ownerId}", "-1")
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andDo(document("v1/{method-name}",
+                        ownerPathParametersSnippet(), apiError()));
+
+    }
 
     private ResponseFieldsSnippet apiError() {
         return responseFields(

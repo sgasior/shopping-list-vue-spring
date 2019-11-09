@@ -268,3 +268,62 @@ Rest responses bodies which can occur when wrong api call is done:
 include::{snippets}/v1/update-owner-should-return-error-when-name-is-null/response-body.adoc[]
 
 
+
+//************************ DELETE *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
+== Delete owner
+When making a  call to this API endpoint, the following request parameters and body can be expected.
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/delete-owner/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/delete-owner/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/delete-owner/path-parameters.adoc[]
+
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/delete-owner/http-response.adoc[]
+
+
+=== Errors (unsuccessful calls)
+
+When a owner with the given identifier isn’t found, a 404 Not Found is provided,
+with a different response containing an error message.
+
+CURL request when you trying to get  not existing owner.
+
+include::{snippets}/v1/delete-owner-should-return-error-if-not-found/curl-request.adoc[]
+
+Http request when you trying to get  not existing owner.
+
+include::{snippets}/v1/delete-owner-should-return-error-if-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/delete-owner-should-return-error-if-not-found/path-parameters.adoc[]
+
+HTTP response when owner is not found.
+include::{snippets}/v1/delete-owner-should-return-error-if-not-found/http-response.adoc[]
+
+Response Body when owner is not found.
+include::{snippets}/v1/delete-owner-should-return-error-if-not-found/response-body.adoc[]
+
+Response Fields when owner is not found.
+include::{snippets}/v1/delete-owner-should-return-error-if-not-found/response-fields.adoc[]
