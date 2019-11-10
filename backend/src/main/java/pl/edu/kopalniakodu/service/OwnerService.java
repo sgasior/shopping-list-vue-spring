@@ -69,14 +69,17 @@ public class OwnerService {
         ownerRepository.delete(owner);
     }
 
-    public void add(OwnerDto ownerDto) {
-        ownerRepository.save(ownerMapper.ownerDtoToOwner(ownerDto));
+    public OwnerDto add(OwnerDto ownerDto) {
+        Owner savedOwner = ownerRepository.save(ownerMapper.ownerDtoToOwner(ownerDto));
+        ownerDto.setId(savedOwner.getId());
+        return ownerDto;
     }
 
-    public void update(Owner owner, OwnerDto updatedOwner) {
+    public OwnerDto update(Owner owner, OwnerDto updatedOwner) {
         updatedOwner.setId(owner.getId());
         owner = ownerMapper.ownerDtoToOwner(updatedOwner);
         ownerRepository.save(owner);
+        return updatedOwner;
     }
 
     private Optional<Owner> getOwnerEntity(String ownerId) {

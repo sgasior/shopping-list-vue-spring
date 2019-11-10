@@ -180,6 +180,9 @@ Rest responses bodies which can occur when wrong api call is done:
 
 
 include::{snippets}/v1/add-owner-should-return-error-when-name-is-to-long/response-body.adoc[]
+include::{snippets}/v1/add-owner-should-return-error-when-id-is-not-null/response-body.adoc[]
+
+
 
 
 //************************ PUT *******************************
@@ -266,6 +269,8 @@ Rest responses bodies which can occur when wrong api call is done:
 
 
 include::{snippets}/v1/update-owner-should-return-error-when-name-is-null/response-body.adoc[]
+include::{snippets}/v1/update-owner-should-return-error-if-not-found/response-body.adoc[]
+include::{snippets}/v1/update-owner-should-return-error-when-id-is-not-null/response-body.adoc[]
 
 
 

@@ -92,9 +92,10 @@ class OwnerControllerTest {
         Mockito.when(ownerService.findDtoById(anyString()))
                 .thenReturn(Optional.of(ownerDto_1));
 
-        mockMvc.perform(get("/api/v1/owner/{ownerId}", UUID.randomUUID().toString())
+        mockMvc.perform(get("/api/v1/owner/{ownerId}", ownerDto_1.getId().toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id", is(ownerDto_1.getId().toString())))
                 .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
                 .andDo(document("v1/{method-name}",
                         ownerPathParametersSnippet(),
@@ -124,7 +125,9 @@ class OwnerControllerTest {
         mockMvc.perform(get("/api/v1/owner")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
+                .andExpect(jsonPath("$.[0].id", is(ownerDto_1.getId().toString())))
                 .andExpect(jsonPath("$.[0].name", is(ownerDto_1.getName())))
+                .andExpect(jsonPath("$.[1].id", is(ownerDto_2.getId().toString())))
                 .andExpect(jsonPath("$.[1].name", is(ownerDto_2.getName())))
                 .andExpect(header().longValue("X-Owners-Total", 2L))
                 .andDo(document("v1/{method-name}", ownerPageHeadersSnippet(), ownerCollectionResponseFieldsSnippet()));
@@ -133,20 +136,20 @@ class OwnerControllerTest {
     @Test
     public void addOwnerShouldReturnOwnerDtoInBodyResponse() throws Exception {
 
-        Mockito.doNothing().when(ownerService).add(any(OwnerDto.class));
-        String ownerDtoJson = objectMapper.writeValueAsString(ownerDto_1);
+        Mockito.when(ownerService.add(any(OwnerDto.class))).thenReturn(ownerDto_1);
+        String ownerDtoJson = objectMapper.writeValueAsString(OwnerDto.builder().name("Geralt").build());
         mockMvc.perform(post("/api/v1/owner")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(ownerDtoJson))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.id").doesNotExist())
+                .andExpect(jsonPath("$.id", is(ownerDto_1.getId().toString())))
                 .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), ownerResponseFieldsSnippet()));
     }
 
     @Test
     public void addOwnerShouldReturnErrorWhenNameIsEmpty() throws Exception {
-        Mockito.doNothing().when(ownerService).add(any(OwnerDto.class));
+        Mockito.when(ownerService.add(any(OwnerDto.class))).thenReturn(ownerDto_1);
         String ownerDtoJson = objectMapper.writeValueAsString(OwnerDto.builder().name("").build());
         mockMvc.perform(post("/api/v1/owner")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -158,7 +161,7 @@ class OwnerControllerTest {
 
     @Test
     public void addOwnerShouldReturnErrorWhenNameIsNull() throws Exception {
-        Mockito.doNothing().when(ownerService).add(any(OwnerDto.class));
+        Mockito.when(ownerService.add(any(OwnerDto.class))).thenReturn(ownerDto_1);
         String ownerDtoJson = objectMapper.writeValueAsString(OwnerDto.builder().name(null).build());
         mockMvc.perform(post("/api/v1/owner")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -170,7 +173,7 @@ class OwnerControllerTest {
 
     @Test
     public void addOwnerShouldReturnErrorWhenNameIsTooShort() throws Exception {
-        Mockito.doNothing().when(ownerService).add(any(OwnerDto.class));
+        Mockito.when(ownerService.add(any(OwnerDto.class))).thenReturn(ownerDto_1);
         String ownerDtoJson = objectMapper.writeValueAsString(OwnerDto.builder().name("ab").build());
         mockMvc.perform(post("/api/v1/owner")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +185,7 @@ class OwnerControllerTest {
 
     @Test
     public void addOwnerShouldReturnErrorWhenNameIsToLong() throws Exception {
-        Mockito.doNothing().when(ownerService).add(any(OwnerDto.class));
+        Mockito.when(ownerService.add(any(OwnerDto.class))).thenReturn(ownerDto_1);
         String ownerDtoJson = objectMapper.writeValueAsString(OwnerDto.builder().name("TO_LOOOOOOOOOOOOOOONG_NAME").build());
         mockMvc.perform(post("/api/v1/owner")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -193,30 +196,51 @@ class OwnerControllerTest {
     }
 
     @Test
+    public void addOwnerShouldReturnErrorWhenIdIsNotNull() throws Exception {
+        Mockito.when(ownerService.add(any(OwnerDto.class))).thenReturn(ownerDto_1);
+        String ownerDtoJson = objectMapper.writeValueAsString(ownerDto_1);
+        mockMvc.perform(post("/api/v1/owner")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(ownerDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("must be null")))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
     public void updateOwnerShouldReturnOwnerDtoInBodyResponse() throws Exception {
 
+        OwnerDto updatedOwner = OwnerDto.builder().name("Geralt").build();
+        OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
+
         Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
-        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
-        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
+
+        String updatedOwnerJSON = objectMapper.writeValueAsString((updatedOwner));
         mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedOwner))
+                .content(updatedOwnerJSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").doesNotExist())
-                .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
+                .andExpect(jsonPath("$.id", is(updatedOwnerWithId.getId().toString())))
+                .andExpect(jsonPath("$.name", is(updatedOwnerWithId.getName())))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), ownerResponseFieldsSnippet(), ownerPathParametersSnippet()));
+
     }
 
     @Test
     public void updateOwnerShouldReturnErrorWhenNameIsEmpty() throws Exception {
 
-        ownerDto_1.setName("");
+        OwnerDto updatedOwner = OwnerDto.builder().name("").build();
+        OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
+
         Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
-        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
-        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
+
+        String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
+
         mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedOwner))
+                .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
@@ -225,13 +249,17 @@ class OwnerControllerTest {
     @Test
     public void updateOwnerShouldReturnErrorWhenNameIsNull() throws Exception {
 
-        ownerDto_1.setName(null);
+        OwnerDto updatedOwner = OwnerDto.builder().name(null).build();
+        OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
+
         Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
-        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
-        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
+
+        String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
+
         mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedOwner))
+                .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
@@ -240,13 +268,17 @@ class OwnerControllerTest {
     @Test
     public void updateOwnerShouldReturnErrorWhenNameIsTooShort() throws Exception {
 
-        ownerDto_1.setName("ab");
+        OwnerDto updatedOwner = OwnerDto.builder().name("ab").build();
+        OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
+
         Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
-        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
-        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
+
+        String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
+
         mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedOwner))
+                .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
@@ -255,13 +287,17 @@ class OwnerControllerTest {
     @Test
     public void updateOwnerShouldReturnErrorWhenNameIsToLong() throws Exception {
 
-        ownerDto_1.setName("TO_LOOOOOOOOOOOOOOONG_NAME");
+        OwnerDto updatedOwner = OwnerDto.builder().name("TO_LOOOOOOOOOOOOOOONG_NAME").build();
+        OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
+
         Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
-        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
-        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
+
+        String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
+
         mockMvc.perform(put("/api/v1/owner/{ownerId}", ownerDto_1.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedOwner))
+                .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
@@ -270,15 +306,38 @@ class OwnerControllerTest {
     @Test
     public void updateOwnerShouldReturnErrorIfNotFound() throws Exception {
 
+        OwnerDto updatedOwner = OwnerDto.builder().name("Geralt").build();
+        OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
+
         Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.empty());
-        Mockito.doNothing().when(ownerService).update(any(Owner.class), any(OwnerDto.class));
-        String updatedOwner = objectMapper.writeValueAsString(ownerDto_1);
+        Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
+
+        String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
+
         mockMvc.perform(put("/api/v1/owner/{ownerId}", "-1")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(updatedOwner))
+                .content(updatedOwnerJSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+    }
+
+    @Test
+    public void updateOwnerShouldReturnErrorWhenIdIsNotNull() throws Exception {
+
+        OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
+
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
+
+        String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwnerWithId);
+
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", "-1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(updatedOwnerJSON))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.[0].message", is("must be null")))
                 .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
@@ -322,24 +381,32 @@ class OwnerControllerTest {
                 fieldWithPath("name").description("Name of the owner")
                         .attributes(key("constraints")
                                 .value(constraintDescriptions
-                                        .descriptionsForProperty("name"))));
+                                        .descriptionsForProperty("name"))),
+                fieldWithPath("id").description("The unique identifier of the owner")
+                        .attributes(key("constraints")
+                                .value(constraintDescriptions
+                                        .descriptionsForProperty("id")))
+
+        );
     }
 
     private ResponseFieldsSnippet ownerResponseFieldsSnippet() {
         return responseFields(
+                fieldWithPath("id").description("The unique identifier of the owner"),
                 fieldWithPath("name").description("Name of the owner")
         );
     }
 
     private ResponseFieldsSnippet ownerCollectionResponseFieldsSnippet() {
         return responseFields(
+                fieldWithPath("[].id").description("The unique identifier of the owner"),
                 fieldWithPath("[].name").description("Name of the owner")
         );
     }
 
     private PathParametersSnippet ownerPathParametersSnippet() {
         return pathParameters(
-                parameterWithName("ownerId").description("The unique identifier of the user")
+                parameterWithName("ownerId").description("The unique identifier of the owner")
         );
     }
 

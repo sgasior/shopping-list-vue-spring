@@ -1,6 +1,5 @@
 package pl.edu.kopalniakodu.web.model;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
@@ -16,7 +15,6 @@ import java.util.UUID;
 public class OwnerDto {
 
     @Null
-    @JsonIgnore
     private UUID id;
 
     @NotBlank

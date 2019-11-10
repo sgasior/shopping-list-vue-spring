@@ -43,7 +43,7 @@ public class OwnerController {
 
     @PostMapping("")
     public ResponseEntity<?> addOwner(@RequestBody @Valid OwnerDto ownerDto) {
-        ownerService.add(ownerDto);
+        ownerDto = ownerService.add(ownerDto);
         return new ResponseEntity<>(ownerDto, HttpStatus.CREATED);
     }
 
@@ -54,7 +54,7 @@ public class OwnerController {
     ) {
         Owner owner = getOwnerEntityOptional(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(ownerId));
-        ownerService.update(owner, updatedOwner);
+        updatedOwner = ownerService.update(owner, updatedOwner);
         return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }
 
