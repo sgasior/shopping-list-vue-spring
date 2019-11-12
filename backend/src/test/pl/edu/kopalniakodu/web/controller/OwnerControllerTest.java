@@ -447,7 +447,8 @@ class OwnerControllerTest {
         return links(
                 halLinks(),
                 linkWithRel("self").description("Self <<Resource>>"),
-                linkWithRel("owners").description("Get all owners <<Resource>>")
+                linkWithRel("tasks").description("Tasks <<Resource>>"),
+                linkWithRel("owners").description("Owners <<Resource>>")
         );
     }
 

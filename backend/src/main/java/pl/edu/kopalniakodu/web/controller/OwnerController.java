@@ -34,7 +34,7 @@ public class OwnerController {
         OwnerDto ownerDto = getOwnerDtoOptional(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(ownerId));
 
-        addLinksToOwnerDto(ownerDto);
+        addBasicLinksToOwnerDto(ownerDto);
         return new ResponseEntity<>(ownerDto, HttpStatus.OK);
     }
 
@@ -58,7 +58,7 @@ public class OwnerController {
     public ResponseEntity<?> addOwner(@RequestBody @Valid OwnerDto ownerDto) {
         ownerDto = ownerService.add(ownerDto);
 
-        addLinksToOwnerDto(ownerDto);
+        addBasicLinksToOwnerDto(ownerDto);
         return new ResponseEntity<>(ownerDto, HttpStatus.CREATED);
     }
 
@@ -70,7 +70,8 @@ public class OwnerController {
         Owner owner = getOwnerEntityOptional(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(ownerId));
         updatedOwner = ownerService.update(owner, updatedOwner);
-        addLinksToOwnerDto(updatedOwner);
+
+        addBasicLinksToOwnerDto(updatedOwner);
         return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }
 
@@ -99,14 +100,24 @@ public class OwnerController {
         return Collections.singletonList(new ApiError("owner.notfound", ex.getMessage()));
     }
 
-    private OwnerDto addLinksToOwnerDto(OwnerDto ownerDto) {
-        ownerDto.add(linkTo(OwnerController.class).slash(ownerDto.getId()).withSelfRel());
+    private void addBasicLinksToOwnerDto(OwnerDto ownerDto) {
+        addOtherLinksToOwnerDto(ownerDto);
+        addSelfLinkToGetOwnerById(ownerDto);
+    }
+
+    private OwnerDto addOtherLinksToOwnerDto(OwnerDto ownerDto) {
+        ownerDto.add(linkTo(OwnerController.class).slash(ownerDto.getId()).slash("task").withRel("tasks"));
         ownerDto.add(linkTo(OwnerController.class).withRel("owners"));
         return ownerDto;
     }
 
+    private OwnerDto addSelfLinkToGetOwnerById(OwnerDto ownerDto) {
+        ownerDto.add(linkTo(OwnerController.class).slash(ownerDto.getId()).withSelfRel());
+        return ownerDto;
+    }
+
     private void addLinksToEachOwnerDto(List<OwnerDto> owners) {
-        owners.stream().map(owner -> addLinksToOwnerDto(owner))
+        owners.stream().map(owner -> addSelfLinkToGetOwnerById(owner))
                 .collect(Collectors.toList());
     }
 
