@@ -1,12 +1,11 @@
 package pl.edu.kopalniakodu.web.model;
 
 import lombok.*;
-import pl.edu.kopalniakodu.domain.Bill;
-import pl.edu.kopalniakodu.domain.Product;
+import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.sql.Timestamp;
-import java.util.LinkedHashSet;
 
 
 @Getter
@@ -15,9 +14,9 @@ import java.util.LinkedHashSet;
 @RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
-public class TaskDto {
+public class TaskDto extends RepresentationModel<TaskDto> {
 
-    @NonNull
+    @Null
     private Long id;
 
     @NonNull
@@ -29,8 +28,5 @@ public class TaskDto {
 
     @NonNull
     private Boolean isDone;
-
-    LinkedHashSet<Product> products;
-    private Bill bill;
 
 }

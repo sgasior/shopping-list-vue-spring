@@ -54,17 +54,15 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void generateTasks() {
-        Task task = new Task(
-                "Zakupy dla Szymka",
-                new Timestamp(System.currentTimeMillis()),
-                false
-        );
+        Task task = new Task();
+        task.setTaskTitle("Zakupy dla Szymka");
+        task.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+        task.setIsDone(false);
 
-        Task task2 = new Task(
-                "Zakupy dla Anetki",
-                new Timestamp(System.currentTimeMillis()),
-                false
-        );
+        Task task2 = new Task();
+        task2.setTaskTitle("Zakupy dla Anetki");
+        task2.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+        task2.setIsDone(false);
         taskRepository.save(task);
         taskRepository.save(task2);
 
