@@ -1,10 +1,9 @@
 package pl.edu.kopalniakodu.domain;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -19,8 +18,7 @@ public class Task extends BaseEntity {
 
     private String taskTitle;
 
-    @JsonFormat(pattern = "yyyy-MM-dd")
-    private Timestamp createdDate;
+    private LocalDateTime createdDate;
 
     private Boolean isDone;
 

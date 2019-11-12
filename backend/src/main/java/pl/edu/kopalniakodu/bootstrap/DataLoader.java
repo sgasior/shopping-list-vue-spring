@@ -10,7 +10,7 @@ import pl.edu.kopalniakodu.repository.ProductRepository;
 import pl.edu.kopalniakodu.repository.TaskRepository;
 
 import java.math.BigDecimal;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 //@Profile("dev")
@@ -56,12 +56,12 @@ public class DataLoader implements CommandLineRunner {
     private void generateTasks() {
         Task task = new Task();
         task.setTaskTitle("Zakupy dla Szymka");
-        task.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+        task.setCreatedDate(LocalDateTime.now());
         task.setIsDone(false);
 
         Task task2 = new Task();
         task2.setTaskTitle("Zakupy dla Anetki");
-        task2.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+        task2.setCreatedDate(LocalDateTime.now());
         task2.setIsDone(false);
         taskRepository.save(task);
         taskRepository.save(task2);

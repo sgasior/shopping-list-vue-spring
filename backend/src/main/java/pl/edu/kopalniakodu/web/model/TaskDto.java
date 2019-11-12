@@ -1,11 +1,12 @@
 package pl.edu.kopalniakodu.web.model;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
-import java.sql.Timestamp;
+import java.time.LocalDateTime;
 
 
 @Getter
@@ -23,10 +24,11 @@ public class TaskDto extends RepresentationModel<TaskDto> {
     @Size(min = 3, max = 50)
     private String taskTitle;
 
-    @NonNull
-    private Timestamp createdDate;
+    @Null
+    @JsonFormat(pattern = "yyyy-MM-dd HH.mm")
+    private LocalDateTime createdDate;
 
-    @NonNull
+    @Null
     private Boolean isDone;
 
 }
