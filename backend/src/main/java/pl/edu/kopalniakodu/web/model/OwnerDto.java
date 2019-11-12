@@ -1,6 +1,7 @@
 package pl.edu.kopalniakodu.web.model;
 
 import lombok.*;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
@@ -12,7 +13,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class OwnerDto {
+public class OwnerDto extends RepresentationModel<OwnerDto> {
 
     @Null
     private UUID id;

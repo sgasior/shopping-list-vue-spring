@@ -3,6 +3,8 @@ package pl.edu.kopalniakodu.web.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +16,10 @@ import pl.edu.kopalniakodu.service.OwnerService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
 import javax.validation.Valid;
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 @RequestMapping("/api/v1/owner")
 @RestController
@@ -30,20 +33,32 @@ public class OwnerController {
     public ResponseEntity<?> getOwner(@PathVariable("ownerId") String ownerId) {
         OwnerDto ownerDto = getOwnerDtoOptional(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(ownerId));
+
+        addLinksToOwnerDto(ownerDto);
         return new ResponseEntity<>(ownerDto, HttpStatus.OK);
     }
 
-    @GetMapping("")
-    public ResponseEntity<List<OwnerDto>> getOwners() {
+    @GetMapping(value = "")
+    public ResponseEntity<CollectionModel<OwnerDto>> getOwners() {
         List<OwnerDto> owners = ownerService.findAllOwners();
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Owners-Total", Integer.toString(owners.size()));
-        return new ResponseEntity<>(owners, headers, HttpStatus.OK);
+
+        addLinksToEachOwnerDto(owners);
+        Link mainSelfLink = linkTo(OwnerController.class).withSelfRel();
+        return new ResponseEntity<>(
+                new CollectionModel<>(owners, mainSelfLink),
+                headers,
+                HttpStatus.OK
+        );
     }
+
 
     @PostMapping("")
     public ResponseEntity<?> addOwner(@RequestBody @Valid OwnerDto ownerDto) {
         ownerDto = ownerService.add(ownerDto);
+
+        addLinksToOwnerDto(ownerDto);
         return new ResponseEntity<>(ownerDto, HttpStatus.CREATED);
     }
 
@@ -55,6 +70,7 @@ public class OwnerController {
         Owner owner = getOwnerEntityOptional(ownerId)
                 .orElseThrow(() -> new OwnerNotFoundException(ownerId));
         updatedOwner = ownerService.update(owner, updatedOwner);
+        addLinksToOwnerDto(updatedOwner);
         return new ResponseEntity<>(updatedOwner, HttpStatus.OK);
     }
 
@@ -77,11 +93,21 @@ public class OwnerController {
                 .findById(ownerId);
     }
 
-
     @ExceptionHandler(OwnerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public List<ApiError> ownerNotFoundExceptionHandler(OwnerNotFoundException ex) {
         return Collections.singletonList(new ApiError("owner.notfound", ex.getMessage()));
+    }
+
+    private OwnerDto addLinksToOwnerDto(OwnerDto ownerDto) {
+        ownerDto.add(linkTo(OwnerController.class).slash(ownerDto.getId()).withSelfRel());
+        ownerDto.add(linkTo(OwnerController.class).withRel("owners"));
+        return ownerDto;
+    }
+
+    private void addLinksToEachOwnerDto(List<OwnerDto> owners) {
+        owners.stream().map(owner -> addLinksToOwnerDto(owner))
+                .collect(Collectors.toList());
     }
 
 }

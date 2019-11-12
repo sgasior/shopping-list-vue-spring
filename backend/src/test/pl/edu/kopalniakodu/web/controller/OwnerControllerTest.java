@@ -15,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.headers.ResponseHeadersSnippet;
+import org.springframework.restdocs.hypermedia.LinksSnippet;
 import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
@@ -36,6 +37,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
+import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -99,7 +101,10 @@ class OwnerControllerTest {
                 .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
                 .andDo(document("v1/{method-name}",
                         ownerPathParametersSnippet(),
-                        ownerResponseFieldsSnippet()));
+                        ownerResponseFieldsSnippet(),
+                        ownerLinksSnippet()
+
+                ));
     }
 
     @Test
@@ -125,12 +130,16 @@ class OwnerControllerTest {
         mockMvc.perform(get("/api/v1/owner")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.[0].id", is(ownerDto_1.getId().toString())))
-                .andExpect(jsonPath("$.[0].name", is(ownerDto_1.getName())))
-                .andExpect(jsonPath("$.[1].id", is(ownerDto_2.getId().toString())))
-                .andExpect(jsonPath("$.[1].name", is(ownerDto_2.getName())))
+                .andExpect(jsonPath("$._embedded.ownerDtoList[0].id", is(ownerDto_1.getId().toString())))
+                .andExpect(jsonPath("$._embedded.ownerDtoList[0].name", is(ownerDto_1.getName())))
+                .andExpect(jsonPath("$._embedded.ownerDtoList[1].id", is(ownerDto_2.getId().toString())))
+                .andExpect(jsonPath("$._embedded.ownerDtoList[1].name", is(ownerDto_2.getName())))
                 .andExpect(header().longValue("X-Owners-Total", 2L))
-                .andDo(document("v1/{method-name}", ownerPageHeadersSnippet(), ownerCollectionResponseFieldsSnippet()));
+                .andDo(document("v1/{method-name}",
+                        ownerPageHeadersSnippet(),
+                        ownerCollectionResponseFieldsSnippet(),
+                        ownerCollectionLinksSnippet()
+                ));
     }
 
     @Test
@@ -144,7 +153,11 @@ class OwnerControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(ownerDto_1.getId().toString())))
                 .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), ownerResponseFieldsSnippet()));
+                .andDo(document("v1/{method-name}",
+                        ownerRequestFieldsSnippet(),
+                        ownerResponseFieldsSnippet(),
+                        ownerLinksSnippet()
+                ));
     }
 
     @Test
@@ -223,7 +236,12 @@ class OwnerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(updatedOwnerWithId.getId().toString())))
                 .andExpect(jsonPath("$.name", is(updatedOwnerWithId.getName())))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), ownerResponseFieldsSnippet(), ownerPathParametersSnippet()));
+                .andDo(document("v1/{method-name}",
+                        ownerRequestFieldsSnippet(),
+                        ownerResponseFieldsSnippet(),
+                        ownerPathParametersSnippet(),
+                        ownerLinksSnippet()
+                ));
 
     }
 
@@ -385,22 +403,25 @@ class OwnerControllerTest {
                 fieldWithPath("id").description("The unique identifier of the owner")
                         .attributes(key("constraints")
                                 .value(constraintDescriptions
-                                        .descriptionsForProperty("id")))
-
+                                        .descriptionsForProperty("id"))),
+                fieldWithPath("links").description("Links<<Resource>>").ignored()
         );
     }
 
     private ResponseFieldsSnippet ownerResponseFieldsSnippet() {
         return responseFields(
                 fieldWithPath("id").description("The unique identifier of the owner"),
-                fieldWithPath("name").description("Name of the owner")
+                fieldWithPath("name").description("Name of the owner"),
+                subsectionWithPath("_links").description("Links <<Resource>>")
         );
     }
 
     private ResponseFieldsSnippet ownerCollectionResponseFieldsSnippet() {
         return responseFields(
-                fieldWithPath("[].id").description("The unique identifier of the owner"),
-                fieldWithPath("[].name").description("Name of the owner")
+                fieldWithPath("_embedded.ownerDtoList[].id").description("The unique identifier of the owner"),
+                fieldWithPath("_embedded.ownerDtoList[].name").description("Name of the owner"),
+                subsectionWithPath("_embedded.ownerDtoList[]._links").description("Link of the owner <<Resource>>"),
+                subsectionWithPath("_links").description("Links <<Resource>>")
         );
     }
 
@@ -412,6 +433,22 @@ class OwnerControllerTest {
 
     private ResponseHeadersSnippet ownerPageHeadersSnippet() {
         return responseHeaders(headerWithName("X-Owners-Total").description("The total amount of owners"));
+    }
+
+    private LinksSnippet ownerCollectionLinksSnippet() {
+        return links(
+                halLinks(),
+                linkWithRel("self").description("Self <<Resource>>")
+        );
+    }
+
+
+    private LinksSnippet ownerLinksSnippet() {
+        return links(
+                halLinks(),
+                linkWithRel("self").description("Self <<Resource>>"),
+                linkWithRel("owners").description("Get all owners <<Resource>>")
+        );
     }
 
 }
