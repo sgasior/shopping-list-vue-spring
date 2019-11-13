@@ -99,7 +99,7 @@ class OwnerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(ownerDto_1.getId().toString())))
                 .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
-                .andDo(document("v1/{method-name}",
+                .andDo(document("v1/owner/{method-name}",
                         ownerPathParametersSnippet(),
                         ownerResponseFieldsSnippet(),
                         ownerLinksSnippet()
@@ -115,7 +115,7 @@ class OwnerControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
-                .andDo(document("v1/{method-name}",
+                .andDo(document("v1/owner/{method-name}",
                         ownerPathParametersSnippet(),
                         apiError()));
     }
@@ -135,7 +135,7 @@ class OwnerControllerTest {
                 .andExpect(jsonPath("$._embedded.ownerDtoList[1].id", is(ownerDto_2.getId().toString())))
                 .andExpect(jsonPath("$._embedded.ownerDtoList[1].name", is(ownerDto_2.getName())))
                 .andExpect(header().longValue("X-Owners-Total", 2L))
-                .andDo(document("v1/{method-name}",
+                .andDo(document("v1/owner/{method-name}",
                         ownerPageHeadersSnippet(),
                         ownerCollectionResponseFieldsSnippet(),
                         ownerCollectionLinksSnippet()
@@ -153,7 +153,7 @@ class OwnerControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id", is(ownerDto_1.getId().toString())))
                 .andExpect(jsonPath("$.name", is(ownerDto_1.getName())))
-                .andDo(document("v1/{method-name}",
+                .andDo(document("v1/owner/{method-name}",
                         ownerRequestFieldsSnippet(),
                         ownerResponseFieldsSnippet(),
                         ownerLinksSnippet()
@@ -169,7 +169,7 @@ class OwnerControllerTest {
                 .content(ownerDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError()));
     }
 
     @Test
@@ -181,7 +181,7 @@ class OwnerControllerTest {
                 .content(ownerDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError()));
     }
 
     @Test
@@ -193,7 +193,7 @@ class OwnerControllerTest {
                 .content(ownerDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError()));
     }
 
     @Test
@@ -205,7 +205,7 @@ class OwnerControllerTest {
                 .content(ownerDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError()));
     }
 
     @Test
@@ -217,7 +217,7 @@ class OwnerControllerTest {
                 .content(ownerDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("must be null")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError()));
     }
 
     @Test
@@ -236,7 +236,7 @@ class OwnerControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", is(updatedOwnerWithId.getId().toString())))
                 .andExpect(jsonPath("$.name", is(updatedOwnerWithId.getName())))
-                .andDo(document("v1/{method-name}",
+                .andDo(document("v1/owner/{method-name}",
                         ownerRequestFieldsSnippet(),
                         ownerResponseFieldsSnippet(),
                         ownerPathParametersSnippet(),
@@ -261,7 +261,7 @@ class OwnerControllerTest {
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
     @Test
@@ -280,7 +280,7 @@ class OwnerControllerTest {
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
     @Test
@@ -299,7 +299,7 @@ class OwnerControllerTest {
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
     @Test
@@ -318,7 +318,7 @@ class OwnerControllerTest {
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 20")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
     @Test
@@ -338,7 +338,7 @@ class OwnerControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
     @Test
@@ -356,7 +356,7 @@ class OwnerControllerTest {
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.[0].message", is("must be null")))
-                .andDo(document("v1/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
+                .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
     @Test
@@ -367,7 +367,7 @@ class OwnerControllerTest {
         mockMvc.perform(delete("/api/v1/owner/{ownerId}", ownerDto_1.getId())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
-                .andDo(document("v1/{method-name}",
+                .andDo(document("v1/owner/{method-name}",
                         ownerPathParametersSnippet()));
 
     }
@@ -382,7 +382,7 @@ class OwnerControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
-                .andDo(document("v1/{method-name}",
+                .andDo(document("v1/owner/{method-name}",
                         ownerPathParametersSnippet(), apiError()));
 
     }
