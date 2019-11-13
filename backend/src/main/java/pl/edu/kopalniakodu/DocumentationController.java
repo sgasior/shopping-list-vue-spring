@@ -6,9 +6,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @Controller
 public class DocumentationController {
 
-    @RequestMapping("/doc")
-    public String docShow() {
-        return "/doc/index";
+    @RequestMapping("/doc/owner")
+    public String docOwnerShow() {
+        return "/doc/owner";
+    }
+
+    @RequestMapping("/doc/task")
+    public String docTaskShow() {
+        return "/doc/task";
     }
 
 }

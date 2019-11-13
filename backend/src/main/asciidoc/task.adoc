@@ -1,0 +1,91 @@
+= Shopping list vue spring app
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc:
+Introduction
+This is Spring REST Docs generated documentation for Shopping List Vue Spring App
+
+
+//************************ GET *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
+= Tasks
+
+`TaskController` makes a call to a very simple service and produces five
+documentation snippets.
+
+== Read all owner's tasks
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/task/find-all-tasks-of-the-owner/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/task/find-all-tasks-of-the-owner/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/find-all-tasks-of-the-owner/path-parameters.adoc[]
+
+=== Response
+
+HTTP response:
+
+include::{snippets}/v1/task/find-all-tasks-of-the-owner/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-body.adoc[]
+
+Response Fields :
+include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-fields.adoc[]
+
+Response Headers :
+include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-headers.adoc[]
+
+== Read single owner's task
+
+
+
+
+
+//************************ POST *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
+
+
+
+
+//************************ PUT *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
+
+
+
+
+//************************ DELETE *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+

@@ -15,12 +15,12 @@ import org.springframework.restdocs.RestDocumentationExtension;
 import org.springframework.restdocs.headers.ResponseHeadersSnippet;
 import org.springframework.restdocs.hypermedia.LinksSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
+import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.edu.kopalniakodu.service.TaskService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 import pl.edu.kopalniakodu.web.model.TaskDto;
 
-import java.text.ParseException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -29,6 +29,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
@@ -36,6 +37,8 @@ import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
+import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
+import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -71,7 +74,7 @@ class TaskControllerTest {
     TaskDto taskDto_2;
 
     @BeforeEach
-    public void init() throws ParseException {
+    public void init() {
 
         LocalDateTime localDateTime = LocalDateTime.now();
         log.info("lol " + localDateTime);
@@ -120,16 +123,30 @@ class TaskControllerTest {
                 .andDo(document("v1/task/{method-name}",
                         taskPageHeadersSnippet(),
                         taskCollectionResponseFieldsSnippet(),
-                        taskCollectionLinksSnippet()
+                        taskCollectionLinksSnippet(),
+                        ownerPathParametersSnippet()
                 ));
+    }
 
+    @Test
+    public void findAllTasksShouldReturnErrorIfOwnerIsNotFound() throws Exception {
 
+        Mockito.when(taskService.findAllTasks(any(String.class))).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/v1/owner/{ownerId}/task", "-1")
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andDo(document("v1/task/{method-name}",
+                        ownerPathParametersSnippet(),
+                        apiError()));
     }
 
     private LinksSnippet taskCollectionLinksSnippet() {
         return links(
                 halLinks(),
-                linkWithRel("self").description("Self <<Resource>>")
+                linkWithRel("self").description("Self <<Resource>>").ignored()
         );
     }
 
@@ -139,8 +156,8 @@ class TaskControllerTest {
                 fieldWithPath("_embedded.taskDtoList[].taskTitle").description("Title of the task"),
                 fieldWithPath("_embedded.taskDtoList[].createdDate").description("Creation date of the task"),
                 fieldWithPath("_embedded.taskDtoList[].isDone").description("Information about that if taks is done or not"),
-                subsectionWithPath("_embedded.taskDtoList[]._links").description("Task resource <<Resource>>"),
-                subsectionWithPath("_links").description("Links <<Resource>>")
+                subsectionWithPath("_embedded.taskDtoList[]._links").description("Task resource <<Resource>>").ignored(),
+                subsectionWithPath("_links").description("Links <<Resource>>").ignored()
         );
 
     }
@@ -148,6 +165,18 @@ class TaskControllerTest {
     private ResponseHeadersSnippet taskPageHeadersSnippet() {
         return responseHeaders(headerWithName("X-Tasks-Total").description("The total amount of tasks"));
 
+    }
+
+    private PathParametersSnippet ownerPathParametersSnippet() {
+        return pathParameters(
+                parameterWithName("ownerId").description("The unique identifier of the owner")
+        );
+    }
+
+    private ResponseFieldsSnippet apiError() {
+        return responseFields(
+                fieldWithPath("[].codes").description("A list of technical codes describing the error"),
+                fieldWithPath("[].message").description("A message describing the error").optional());
     }
 
 }
