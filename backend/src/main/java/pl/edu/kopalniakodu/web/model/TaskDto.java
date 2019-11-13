@@ -31,4 +31,5 @@ public class TaskDto extends RepresentationModel<TaskDto> {
     @Null
     private Boolean isDone;
 
+    private Integer taskNumber;
 }

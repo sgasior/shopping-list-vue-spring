@@ -50,6 +50,15 @@ public class TaskController {
         );
     }
 
+    @GetMapping("/{ownerId}/task/{taskNumber}")
+    public ResponseEntity<?> getTask(
+            @PathVariable("ownerId") String ownerId,
+            @PathVariable("taskNumber") int taskNumber
+    ) {
+        TaskDto taskDto = taskService.findTask(ownerId, taskNumber);
+        return new ResponseEntity<>(taskDto, HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
+    }
+
 
     @ExceptionHandler(OwnerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
@@ -68,7 +77,6 @@ public class TaskController {
         taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").withRel("tasks"));
         return taskDto;
     }
-
 
     private void addLinksToEachTaskDto(List<TaskDto> tasks, String ownerId) {
         tasks.stream().map(taskDto -> addLinksToTaskDto(taskDto, ownerId))
