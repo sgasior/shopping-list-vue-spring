@@ -35,4 +35,8 @@ public class Task extends BaseEntity {
     @JoinColumn(name = "bill_id")
     private Bill bill;
 
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name="owner_id")
+    private Owner owner;
+
 }

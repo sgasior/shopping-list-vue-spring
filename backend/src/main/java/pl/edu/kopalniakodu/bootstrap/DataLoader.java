@@ -27,8 +27,8 @@ public class DataLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         generateBill();
         generateProducts();
-        generateTasks();
         generatePersons();
+        generateTasks();
     }
 
     private void generateBill() {
@@ -47,9 +47,6 @@ public class DataLoader implements CommandLineRunner {
         owner.setName("Szymaa");
         UUID savedOwnerID = ownerRepository.save(owner).getId();
         Owner ownerFound = ownerRepository.findById(savedOwnerID).get();
-        for (Task task : taskRepository.findAll()) {
-            ownerFound.getTasks().add(task);
-        }
         ownerRepository.save(ownerFound);
     }
 
@@ -71,6 +68,8 @@ public class DataLoader implements CommandLineRunner {
         }
 
         task.setBill(billRepository.findAll().get(0));
+        task.setOwner(ownerRepository.findAll().get(0));
+        task2.setOwner(ownerRepository.findAll().get(0));
         taskRepository.save(task);
 
 
