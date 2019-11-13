@@ -1,4 +1,4 @@
-package pl.edu.kopalniakodu.web.mapper;
+package pl.edu.kopalniakodu.web.mapper.CustomMappers;
 
 import org.springframework.stereotype.Component;
 

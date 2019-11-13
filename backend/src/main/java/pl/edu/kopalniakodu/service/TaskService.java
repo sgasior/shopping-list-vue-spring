@@ -36,7 +36,7 @@ public class TaskService {
 
         List<TaskDto> returnValue = new ArrayList<>();
 
-        for (Task taskEntity : ownerRepository.findAllTaks(UUID.fromString(ownerId))) {
+        for (Task taskEntity : ownerRepository.findAllTasks(UUID.fromString(ownerId))) {
             TaskDto taskDto = taskMapper.taskToTaskDto(taskEntity);
             returnValue.add(taskDto);
         }
@@ -50,7 +50,7 @@ public class TaskService {
                 () -> new OwnerNotFoundException(ownerId)
         );
 
-        List<Task> taskList = ownerRepository.findAllTaks(owner.getId());
+        List<Task> taskList = ownerRepository.findAllTasks(owner.getId());
         if (taskList.size() < taskNumber || taskNumber <= 0) {
             throw new TaskNotFoundException(taskNumber);
         }

@@ -156,6 +156,7 @@ class TaskControllerTest {
                 fieldWithPath("_embedded.taskDtoList[].taskTitle").description("Title of the task"),
                 fieldWithPath("_embedded.taskDtoList[].createdDate").description("Creation date of the task"),
                 fieldWithPath("_embedded.taskDtoList[].isDone").description("Information about that if taks is done or not"),
+                fieldWithPath("_embedded.taskDtoList[].taskNumber").description("Number of owner's task"),
                 subsectionWithPath("_embedded.taskDtoList[]._links").description("Task resource <<Resource>>").ignored(),
                 subsectionWithPath("_links").description("Links <<Resource>>").ignored()
         );

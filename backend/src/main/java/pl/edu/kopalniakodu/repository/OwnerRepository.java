@@ -12,6 +12,5 @@ import java.util.UUID;
 public interface OwnerRepository extends JpaRepository<Owner, UUID> {
 
     @Query("SELECT o.tasks FROM Owner o WHERE o.id=:UUID")
-    List<Task> findAllTaks(@Param("UUID") UUID uuid);
-
+    List<Task> findAllTasks(@Param("UUID") UUID ownerUUID);
 }
