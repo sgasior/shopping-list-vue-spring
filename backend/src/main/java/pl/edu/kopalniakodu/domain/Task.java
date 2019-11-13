@@ -4,8 +4,8 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.LinkedHashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Entity
@@ -27,7 +27,7 @@ public class Task extends BaseEntity {
             orphanRemoval = true
     )
     @JoinColumn(name = "task_id")
-    Set<Product> products = new LinkedHashSet<>();
+    List<Product> products = new ArrayList<>();
 
     @OneToOne(
             cascade = CascadeType.ALL
@@ -36,7 +36,7 @@ public class Task extends BaseEntity {
     private Bill bill;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name="owner_id")
+    @JoinColumn(name = "owner_id")
     private Owner owner;
 
 }
