@@ -73,8 +73,8 @@ public class TaskController {
     }
 
     private TaskDto addLinksToTaskDto(TaskDto taskDto, String ownerId) {
+        taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").slash(taskDto.getTaskNumber()).withRel("task"));
         taskDto.add(linkTo(TaskController.class).slash(ownerId).withRel("owner"));
-        taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").withRel("tasks"));
         return taskDto;
     }
 
