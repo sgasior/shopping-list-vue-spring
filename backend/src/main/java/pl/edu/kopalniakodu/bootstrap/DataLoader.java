@@ -71,6 +71,7 @@ public class DataLoader implements CommandLineRunner {
         task.setOwner(ownerRepository.findAll().get(0));
         task2.setOwner(ownerRepository.findAll().get(0));
         taskRepository.save(task);
+        taskRepository.save(task2);
 
 
     }

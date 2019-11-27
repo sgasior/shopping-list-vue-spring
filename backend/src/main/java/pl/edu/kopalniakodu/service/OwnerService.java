@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 import pl.edu.kopalniakodu.domain.Owner;
+import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
 import pl.edu.kopalniakodu.repository.OwnerRepository;
 import pl.edu.kopalniakodu.web.mapper.OwnerMapper;
 import pl.edu.kopalniakodu.web.mapper.TaskMapper;
@@ -49,20 +50,22 @@ public class OwnerService {
         return returnValue;
     }
 
-    public Optional<OwnerDto> findDtoById(String ownerId) {
+    public OwnerDto findDtoById(String ownerId) {
         Optional<Owner> ownerEntity = getOwnerEntity(ownerId);
-        if (!ownerEntity.isEmpty()) {
-            return Optional.of(ownerMapper.ownerToOwnerDto(ownerEntity.get()));
+        if (ownerEntity.isEmpty()) {
+            throw new OwnerNotFoundException(ownerId);
+        } else {
+            return ownerMapper.ownerToOwnerDto(ownerEntity.get());
         }
-        return Optional.empty();
     }
 
-    public Optional<Owner> findById(String ownerId) {
+    public Owner findById(String ownerId) {
         Optional<Owner> ownerEntity = getOwnerEntity(ownerId);
-        if (!ownerEntity.isEmpty()) {
-            return ownerEntity;
+        if (ownerEntity.isEmpty()) {
+            throw new OwnerNotFoundException(ownerId);
+        } else {
+            return ownerEntity.get();
         }
-        return Optional.empty();
     }
 
     public void delete(Owner owner) {

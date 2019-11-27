@@ -21,13 +21,13 @@ import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.edu.kopalniakodu.domain.Owner;
+import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
 import pl.edu.kopalniakodu.service.OwnerService;
 import pl.edu.kopalniakodu.web.mapper.OwnerMapper;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.hasItem;
@@ -92,7 +92,7 @@ class OwnerControllerTest {
     public void findOneShoouldReturnOwner() throws Exception {
 
         Mockito.when(ownerService.findDtoById(anyString()))
-                .thenReturn(Optional.of(ownerDto_1));
+                .thenReturn(ownerDto_1);
 
         mockMvc.perform(get("/api/v1/owner/{ownerId}", ownerDto_1.getId().toString())
                 .accept(MediaType.APPLICATION_JSON))
@@ -109,7 +109,7 @@ class OwnerControllerTest {
 
     @Test
     public void findOneOwnerShouldReturnErrorIfNotFound() throws Exception {
-        Mockito.when(ownerService.findDtoById(anyString())).thenReturn(Optional.empty());
+        Mockito.when(ownerService.findDtoById(anyString())).thenThrow(new OwnerNotFoundException("-1"));
         mockMvc.perform(get("/api/v1/owner/{ownerId}", "-1")
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
@@ -226,7 +226,7 @@ class OwnerControllerTest {
         OwnerDto updatedOwner = OwnerDto.builder().name("Geralt").build();
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(ownerMapper.ownerDtoToOwner(ownerDto_1));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString((updatedOwner));
@@ -251,7 +251,7 @@ class OwnerControllerTest {
         OwnerDto updatedOwner = OwnerDto.builder().name("").build();
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(ownerMapper.ownerDtoToOwner(ownerDto_1));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
@@ -270,7 +270,7 @@ class OwnerControllerTest {
         OwnerDto updatedOwner = OwnerDto.builder().name(null).build();
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(ownerMapper.ownerDtoToOwner(ownerDto_1));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
@@ -289,7 +289,7 @@ class OwnerControllerTest {
         OwnerDto updatedOwner = OwnerDto.builder().name("ab").build();
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(ownerMapper.ownerDtoToOwner(ownerDto_1));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
@@ -308,7 +308,7 @@ class OwnerControllerTest {
         OwnerDto updatedOwner = OwnerDto.builder().name("TO_LOOOOOOOOOOOOOOONG_NAME").build();
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(ownerMapper.ownerDtoToOwner(ownerDto_1));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
@@ -327,7 +327,7 @@ class OwnerControllerTest {
         OwnerDto updatedOwner = OwnerDto.builder().name("Geralt").build();
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.empty());
+        Mockito.when(ownerService.findById(any(String.class))).thenThrow(new OwnerNotFoundException("-1"));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
@@ -346,7 +346,7 @@ class OwnerControllerTest {
 
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(ownerMapper.ownerDtoToOwner(ownerDto_1));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwnerWithId);
@@ -361,7 +361,7 @@ class OwnerControllerTest {
 
     @Test
     public void deleteOwner() throws Exception {
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.of(ownerMapper.ownerDtoToOwner(ownerDto_1)));
+        Mockito.when(ownerService.findById(any(String.class))).thenReturn(ownerMapper.ownerDtoToOwner(ownerDto_1));
         Mockito.doNothing().when(ownerService).delete(any(Owner.class));
 
         mockMvc.perform(delete("/api/v1/owner/{ownerId}", ownerDto_1.getId())
@@ -374,7 +374,7 @@ class OwnerControllerTest {
 
     @Test
     public void deleteOwnerShouldReturnErrorIfNotFound() throws Exception {
-        Mockito.when(ownerService.findById(any(String.class))).thenReturn(Optional.empty());
+        Mockito.when(ownerService.findById(any(String.class))).thenThrow(new OwnerNotFoundException("-1"));
         Mockito.doNothing().when(ownerService).delete(any(Owner.class));
 
         mockMvc.perform(delete("/api/v1/owner/{ownerId}", "-1")

@@ -17,6 +17,7 @@ import org.springframework.restdocs.hypermedia.LinksSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.web.servlet.MockMvc;
+import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
 import pl.edu.kopalniakodu.service.TaskService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 import pl.edu.kopalniakodu.web.model.TaskDto;
@@ -25,7 +26,6 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -86,18 +86,18 @@ class TaskControllerTest {
 
         taskDto_1 = TaskDto
                 .builder()
-                .id(TASK_ID_1)
                 .taskTitle(TASK_TITLE_1)
                 .createdDate(TASK_CREATION_DATE_1)
                 .isDone(TASK_IS_DONE_1)
+                .taskNumber(1)
                 .build();
 
         taskDto_2 = TaskDto
                 .builder()
-                .id(TASK_ID_2)
                 .taskTitle(TASK_TITLE_2)
                 .createdDate(TASK_CREATION_DATE_2)
                 .isDone(TASK_IS_DONE_2)
+                .taskNumber(1)
                 .build();
 
     }
@@ -106,20 +106,20 @@ class TaskControllerTest {
     public void findAllTasksOfTheOwner() throws Exception {
 
         List<TaskDto> taskDtoList = Arrays.asList(taskDto_1, taskDto_2);
-        Mockito.when(taskService.findAllTasks(any(String.class))).thenReturn(Optional.of(taskDtoList));
+        Mockito.when(taskService.findAllTasks(any(String.class))).thenReturn(taskDtoList);
 
         mockMvc.perform(get("/api/v1/owner/{ownerId}/task", ownerDto_1.getId().toString())
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$._embedded.taskDtoList[0].id", is(taskDto_1.getId().intValue())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[0].taskTitle", is(taskDto_1.getTaskTitle())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[0].createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
                 .andExpect(jsonPath("$._embedded.taskDtoList[0].isDone", is(taskDto_1.getIsDone())))
-                .andExpect(jsonPath("$._embedded.taskDtoList[1].id", is(taskDto_2.getId().intValue())))
+                .andExpect(jsonPath("$._embedded.taskDtoList[0].taskNumber", is(taskDto_1.getTaskNumber())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[1].taskTitle", is(taskDto_2.getTaskTitle())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[1].createdDate", is(taskDto_2.getCreatedDate().format(FORMATTER))))
                 .andExpect(jsonPath("$._embedded.taskDtoList[1].isDone", is(taskDto_2.getIsDone())))
-                .andExpect(header().longValue("X-Tasks-Total", 2L))
+                .andExpect(jsonPath("$._embedded.taskDtoList[1].taskNumber", is(taskDto_2.getTaskNumber())))
+                .andExpect(header().longValue("X-Tasks-Total", taskDtoList.size()))
                 .andDo(document("v1/task/{method-name}",
                         taskPageHeadersSnippet(),
                         taskCollectionResponseFieldsSnippet(),
@@ -131,7 +131,7 @@ class TaskControllerTest {
     @Test
     public void findAllTasksShouldReturnErrorIfOwnerIsNotFound() throws Exception {
 
-        Mockito.when(taskService.findAllTasks(any(String.class))).thenReturn(Optional.empty());
+        Mockito.when(taskService.findAllTasks(any(String.class))).thenThrow(new OwnerNotFoundException("-1"));
 
         mockMvc.perform(get("/api/v1/owner/{ownerId}/task", "-1")
                 .accept(MediaType.APPLICATION_JSON))
@@ -152,7 +152,6 @@ class TaskControllerTest {
 
     private ResponseFieldsSnippet taskCollectionResponseFieldsSnippet() {
         return responseFields(
-                fieldWithPath("_embedded.taskDtoList[].id").description("The unique identifier of the task"),
                 fieldWithPath("_embedded.taskDtoList[].taskTitle").description("Title of the task"),
                 fieldWithPath("_embedded.taskDtoList[].createdDate").description("Creation date of the task"),
                 fieldWithPath("_embedded.taskDtoList[].isDone").description("Information about that if taks is done or not"),

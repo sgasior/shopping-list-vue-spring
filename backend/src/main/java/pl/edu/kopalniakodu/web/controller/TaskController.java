@@ -36,8 +36,7 @@ public class TaskController {
     public ResponseEntity<CollectionModel<TaskDto>> getTasks(@PathVariable("ownerId") String ownerId) {
 
 
-        List<TaskDto> tasks = taskService.findAllTasks(ownerId)
-                .orElseThrow(() -> new OwnerNotFoundException(ownerId));
+        List<TaskDto> tasks = taskService.findAllTasks(ownerId);
         HttpHeaders headers = new HttpHeaders();
         headers.add("X-Tasks-Total", Integer.toString(tasks.size()));
 
@@ -56,7 +55,7 @@ public class TaskController {
             @PathVariable("taskNumber") int taskNumber
     ) {
         TaskDto taskDto = taskService.findTask(ownerId, taskNumber);
-        return new ResponseEntity<>(taskDto, HttpStatus.HTTP_VERSION_NOT_SUPPORTED);
+        return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
 
@@ -73,7 +72,7 @@ public class TaskController {
     }
 
     private TaskDto addLinksToTaskDto(TaskDto taskDto, String ownerId) {
-        taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").slash(taskDto.getTaskNumber()).withRel("task"));
+        taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").slash(taskDto.getTaskNumber()).withRel("self"));
         taskDto.add(linkTo(TaskController.class).slash(ownerId).withRel("owner"));
         return taskDto;
     }
