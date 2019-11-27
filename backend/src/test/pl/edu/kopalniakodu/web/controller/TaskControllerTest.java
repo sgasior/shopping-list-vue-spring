@@ -1,5 +1,6 @@
 package pl.edu.kopalniakodu.web.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.log4j.Log4j2;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -12,12 +13,15 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.RestDocumentationExtension;
+import org.springframework.restdocs.constraints.ConstraintDescriptions;
 import org.springframework.restdocs.headers.ResponseHeadersSnippet;
 import org.springframework.restdocs.hypermedia.LinksSnippet;
+import org.springframework.restdocs.payload.RequestFieldsSnippet;
 import org.springframework.restdocs.payload.ResponseFieldsSnippet;
 import org.springframework.restdocs.request.PathParametersSnippet;
 import org.springframework.test.web.servlet.MockMvc;
 import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
+import pl.edu.kopalniakodu.exceptions.TaskNotFoundException;
 import pl.edu.kopalniakodu.service.TaskService;
 import pl.edu.kopalniakodu.web.model.OwnerDto;
 import pl.edu.kopalniakodu.web.model.TaskDto;
@@ -28,17 +32,20 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
+import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.restdocs.headers.HeaderDocumentation.headerWithName;
 import static org.springframework.restdocs.headers.HeaderDocumentation.responseHeaders;
 import static org.springframework.restdocs.hypermedia.HypermediaDocumentation.*;
 import static org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document;
-import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.get;
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
 import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.snippet.Attributes.key;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -49,24 +56,22 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ComponentScan(basePackages = "pl.edu.kopalniakodu.web.mapper")
 class TaskControllerTest {
 
-
-    private static final String OWNER_NAME_1 = "John";
-    private static final String OWNER_NAME_2 = "Edd";
-    private static final Long TASK_ID_1 = 1L;
-    private static final Long TASK_ID_2 = 2L;
-    private static final String TASK_TITLE_1 = "Zakupy dla Szymka";
-    private static final String TASK_TITLE_2 = "Zakupy dla Anetki";
-    private static LocalDateTime TASK_CREATION_DATE_1 = LocalDateTime.now();
-    private static LocalDateTime TASK_CREATION_DATE_2 = LocalDateTime.now();
-    private static final boolean TASK_IS_DONE_1 = false;
-    private static final boolean TASK_IS_DONE_2 = true;
     private static final DateTimeFormatter FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH.mm");
+    private static final String MESSAGE_OWNER_NOT_FOUND_EXCEPTION = "Owner with this id: -1 does not exists.";
+    private static final String CODE_OWNER_NOT_FOUND_EXCEPTION = "owner.notfound";
+    private static final String MESSAGE_TASK_NOT_FOUND_EXCEPTION = "Task with this number: -1 does not exists.";
+    private static final String CODE_TASK_NOT_FOUND_EXCEPTION = "task.notfound";
+    private static final String NOT_EXISTING_OWNER_ID = "-1";
+    private static final Integer NOT_EXISTING_TASK_ID = -1;
 
     @Autowired
     MockMvc mockMvc;
 
     @MockBean
     TaskService taskService;
+
+    @Autowired
+    ObjectMapper objectMapper;
 
     OwnerDto ownerDto_1;
 
@@ -76,28 +81,26 @@ class TaskControllerTest {
     @BeforeEach
     public void init() {
 
-        LocalDateTime localDateTime = LocalDateTime.now();
-        log.info("lol " + localDateTime);
         ownerDto_1 = OwnerDto
                 .builder()
                 .id(UUID.randomUUID())
-                .name(OWNER_NAME_1)
+                .name("John")
                 .build();
 
         taskDto_1 = TaskDto
                 .builder()
-                .taskTitle(TASK_TITLE_1)
-                .createdDate(TASK_CREATION_DATE_1)
-                .isDone(TASK_IS_DONE_1)
+                .taskTitle("Zakupy dla Szymka")
+                .createdDate(LocalDateTime.now())
+                .isDone(false)
                 .taskNumber(1)
                 .build();
 
         taskDto_2 = TaskDto
                 .builder()
-                .taskTitle(TASK_TITLE_2)
-                .createdDate(TASK_CREATION_DATE_2)
-                .isDone(TASK_IS_DONE_2)
-                .taskNumber(1)
+                .taskTitle("Zakupy dla Anetki")
+                .createdDate(LocalDateTime.now())
+                .isDone(true)
+                .taskNumber(2)
                 .build();
 
     }
@@ -131,22 +134,204 @@ class TaskControllerTest {
     @Test
     public void findAllTasksShouldReturnErrorIfOwnerIsNotFound() throws Exception {
 
-        Mockito.when(taskService.findAllTasks(any(String.class))).thenThrow(new OwnerNotFoundException("-1"));
+        Mockito.when(taskService.findAllTasks(any(String.class))).thenThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID));
 
-        mockMvc.perform(get("/api/v1/owner/{ownerId}/task", "-1")
+        mockMvc.perform(get("/api/v1/owner/{ownerId}/task", NOT_EXISTING_OWNER_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
-                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andDo(document("v1/task/{method-name}",
                         ownerPathParametersSnippet(),
                         apiError()));
+    }
+
+    @Test
+    public void findOneTaskShouldReturnTaskDto() throws Exception {
+
+        Mockito.when(taskService.findTask(anyString(), anyInt()))
+                .thenReturn(taskDto_1);
+
+        mockMvc.perform(get("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("taskTitle", is(taskDto_1.getTaskTitle())))
+                .andExpect(jsonPath("createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
+                .andExpect(jsonPath("isDone", is(taskDto_1.getIsDone())))
+                .andExpect(jsonPath("taskNumber", is(taskDto_1.getTaskNumber())))
+                .andDo(document("v1/task/{method-name}",
+                        taskResponseFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet()
+                ));
+    }
+
+    @Test
+    public void findOneTaskShouldReturnErrorIfOwnerNotFound() throws Exception {
+
+        Mockito.when(taskService.findTask(anyString(), anyInt()))
+                .thenThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID));
+
+        mockMvc.perform(get("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)));
+    }
+
+    @Test
+    public void findOneTaskShouldReturnErrorIfTaskNotFound() throws Exception {
+
+        Mockito.when(taskService.findTask(anyString(), anyInt()))
+                .thenThrow(new TaskNotFoundException(NOT_EXISTING_TASK_ID));
+
+        mockMvc.perform(get("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_TASK_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_TASK_NOT_FOUND_EXCEPTION)));
+    }
+
+    @Test
+    public void addTaskShouldReturnTaskDto() throws Exception {
+
+        TaskDto newTask = TaskDto
+                .builder()
+                .taskTitle(taskDto_1.getTaskTitle())
+                .isDone(taskDto_1.getIsDone())
+                .build();
+
+        Mockito.when(taskService.add(any(TaskDto.class), anyString()))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(newTask);
+        mockMvc.perform(post("/api/v1/owner/{ownerId}/task", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("taskTitle", is(taskDto_1.getTaskTitle())))
+                .andExpect(jsonPath("createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
+                .andExpect(jsonPath("isDone", is(taskDto_1.getIsDone())))
+                .andExpect(jsonPath("taskNumber", is(taskDto_1.getTaskNumber())))
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskResponseFieldsSnippet(),
+                        ownerPathParametersSnippet()
+                ));
+
+    }
+
+    @Test
+    public void addTaskShouldReturnErrorWhenTaskIsEmpty() throws Exception {
+
+        Mockito.when(taskService.add(any(TaskDto.class), anyString()))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("").build());
+        mockMvc.perform(post("/api/v1/owner/{ownerId}/task", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void addTaskShouldReturnErrorWhenTaskIsNull() throws Exception {
+
+        Mockito.when(taskService.add(any(TaskDto.class), anyString()))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle(null).build());
+        mockMvc.perform(post("/api/v1/owner/{ownerId}/task", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void addTaskShouldReturnErrorWhenTaskIsToShort() throws Exception {
+
+        Mockito.when(taskService.add(any(TaskDto.class), anyString()))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("ab").build());
+        mockMvc.perform(post("/api/v1/owner/{ownerId}/task", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void addTaskShouldReturnErrorWhenOwnerIsNotFound() throws Exception {
+
+        Mockito.when(taskService.add(any(TaskDto.class), anyString()))
+                .thenThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID));
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("abcd").build());
+        mockMvc.perform(post("/api/v1/owner/{ownerId}/task", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void deleteTask() throws Exception {
+        Mockito.doNothing().when(taskService).delete(anyString(), anyInt());
+        mockMvc.perform(delete("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNoContent())
+                .andDo(document("v1/owner/{method-name}",
+                        taskandOwnerPathParametersSnippet()));
+    }
+
+    @Test
+    public void deleteTaskShouldReturnErrorIfOwnerNotFound() throws Exception {
+        doThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID)).when(taskService).delete(anyString(), anyInt());
+        mockMvc.perform(delete("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}", apiError()));
+    }
+
+    private RequestFieldsSnippet taskRequestFieldsSnippet() {
+        ConstraintDescriptions constraintDescriptions = new ConstraintDescriptions(TaskDto.class);
+        return requestFields(
+                fieldWithPath("taskTitle").description("Title of the task")
+                        .attributes(key("constraints")
+                                .value(constraintDescriptions
+                                        .descriptionsForProperty("taskTitle"))),
+                fieldWithPath("createdDate").description("Creation date of task")
+                        .attributes(key("constraints")
+                                .value(constraintDescriptions
+                                        .descriptionsForProperty("createdDate"))).ignored(),
+                fieldWithPath("taskNumber").description("The unique identifier of the task")
+                        .attributes(key("constraints")
+                                .value(constraintDescriptions
+                                        .descriptionsForProperty("taskNumber"))).ignored(),
+                fieldWithPath("isDone").description("The unique identifier of the task")
+                        .attributes(key("constraints")
+                                .value(constraintDescriptions
+                                        .descriptionsForProperty("isDone"))).optional(),
+                fieldWithPath("links").description("Condition to check if task is done").ignored()
+        );
     }
 
     private LinksSnippet taskCollectionLinksSnippet() {
         return links(
                 halLinks(),
                 linkWithRel("self").description("Self <<Resource>>").ignored()
+        );
+    }
+
+    private LinksSnippet taskLinksSnippet() {
+        return links(
+                halLinks(),
+                linkWithRel("self").description("Self <<Resource>>").ignored(),
+                linkWithRel("tasks").description("Tasks <<Resource>>").ignored()
         );
     }
 
@@ -162,6 +347,16 @@ class TaskControllerTest {
 
     }
 
+    private ResponseFieldsSnippet taskResponseFieldsSnippet() {
+        return responseFields(
+                fieldWithPath("taskTitle").description("Title of the task"),
+                fieldWithPath("createdDate").description("Creation date of the task"),
+                fieldWithPath("isDone").description("Information about that if taks is done or not"),
+                fieldWithPath("taskNumber").description("Number of owner's task"),
+                subsectionWithPath("_links").description("Links <<Resource>>").ignored()
+        );
+    }
+
     private ResponseHeadersSnippet taskPageHeadersSnippet() {
         return responseHeaders(headerWithName("X-Tasks-Total").description("The total amount of tasks"));
 
@@ -170,6 +365,13 @@ class TaskControllerTest {
     private PathParametersSnippet ownerPathParametersSnippet() {
         return pathParameters(
                 parameterWithName("ownerId").description("The unique identifier of the owner")
+        );
+    }
+
+    private PathParametersSnippet taskandOwnerPathParametersSnippet() {
+        return pathParameters(
+                parameterWithName("ownerId").description("The unique identifier of the owner"),
+                parameterWithName("taskNumber").description("The unique identifier of the taskNumber")
         );
     }
 

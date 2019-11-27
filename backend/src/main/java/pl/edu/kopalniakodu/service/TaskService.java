@@ -49,7 +49,9 @@ public class TaskService {
         Owner owner = ownerService.findById(ownerId);
         Task taskToBeSaved = taskMapper.taskDtoToTask(taskDto);
         taskToBeSaved.setCreatedDate(LocalDateTime.now());
-        taskToBeSaved.setIsDone(false);
+        if (taskDto.getIsDone() == null) {
+            taskToBeSaved.setIsDone(false);
+        }
         taskToBeSaved.setOwner(owner);
         Task savedTask = taskRepository.save(taskToBeSaved);
         return taskMapper.taskToTaskDto(savedTask);

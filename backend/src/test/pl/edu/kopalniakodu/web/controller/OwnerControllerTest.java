@@ -53,8 +53,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @ComponentScan(basePackages = "pl.edu.kopalniakodu.web.mapper")
 class OwnerControllerTest {
 
-    private static final String OWNER_NAME_1 = "John";
-    private static final String OWNER_NAME_2 = "Edd";
+
+    private static final String MESSAGE_OWNER_NOT_FOUND_EXCEPTION = "Owner with this id: -1 does not exists.";
+    private static final String CODE_OWNER_NOT_FOUND_EXCEPTION = "owner.notfound";
+    private static final String NOT_EXISTING_OWNER_ID = "-1";
 
     @Autowired
     MockMvc mockMvc;
@@ -77,13 +79,13 @@ class OwnerControllerTest {
         ownerDto_1 = OwnerDto
                 .builder()
                 .id(UUID.randomUUID())
-                .name(OWNER_NAME_1)
+                .name("John")
                 .build();
 
         ownerDto_2 = OwnerDto
                 .builder()
                 .id(UUID.randomUUID())
-                .name(OWNER_NAME_2)
+                .name("Edd")
                 .build();
 
     }
@@ -109,12 +111,12 @@ class OwnerControllerTest {
 
     @Test
     public void findOneOwnerShouldReturnErrorIfNotFound() throws Exception {
-        Mockito.when(ownerService.findDtoById(anyString())).thenThrow(new OwnerNotFoundException("-1"));
-        mockMvc.perform(get("/api/v1/owner/{ownerId}", "-1")
+        Mockito.when(ownerService.findDtoById(anyString())).thenThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID));
+        mockMvc.perform(get("/api/v1/owner/{ownerId}", NOT_EXISTING_OWNER_ID)
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
-                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andDo(document("v1/owner/{method-name}",
                         ownerPathParametersSnippet(),
                         apiError()));
@@ -327,17 +329,17 @@ class OwnerControllerTest {
         OwnerDto updatedOwner = OwnerDto.builder().name("Geralt").build();
         OwnerDto updatedOwnerWithId = OwnerDto.builder().name("Geralt").id(UUID.randomUUID()).build();
 
-        Mockito.when(ownerService.findById(any(String.class))).thenThrow(new OwnerNotFoundException("-1"));
+        Mockito.when(ownerService.findById(any(String.class))).thenThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID));
         Mockito.when(ownerService.update((any(Owner.class)), any(OwnerDto.class))).thenReturn(updatedOwnerWithId);
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwner);
 
-        mockMvc.perform(put("/api/v1/owner/{ownerId}", "-1")
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", NOT_EXISTING_OWNER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedOwnerJSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
-                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
@@ -351,7 +353,7 @@ class OwnerControllerTest {
 
         String updatedOwnerJSON = objectMapper.writeValueAsString(updatedOwnerWithId);
 
-        mockMvc.perform(put("/api/v1/owner/{ownerId}", "-1")
+        mockMvc.perform(put("/api/v1/owner/{ownerId}", NOT_EXISTING_OWNER_ID)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
@@ -374,14 +376,14 @@ class OwnerControllerTest {
 
     @Test
     public void deleteOwnerShouldReturnErrorIfNotFound() throws Exception {
-        Mockito.when(ownerService.findById(any(String.class))).thenThrow(new OwnerNotFoundException("-1"));
+        Mockito.when(ownerService.findById(any(String.class))).thenThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID));
         Mockito.doNothing().when(ownerService).delete(any(Owner.class));
 
-        mockMvc.perform(delete("/api/v1/owner/{ownerId}", "-1")
+        mockMvc.perform(delete("/api/v1/owner/{ownerId}", NOT_EXISTING_OWNER_ID)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
-                .andExpect(jsonPath("$.[0].message", is("Owner with this id: -1 does not exists.")))
-                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder("owner.notfound")))
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andDo(document("v1/owner/{method-name}",
                         ownerPathParametersSnippet(), apiError()));
 

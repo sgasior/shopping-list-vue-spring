@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
 
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.Size;
 import java.time.LocalDateTime;
@@ -17,7 +18,7 @@ import java.time.LocalDateTime;
 public class TaskDto extends RepresentationModel<TaskDto> {
 
     @Size(min = 3, max = 50)
-    @NonNull
+    @NotBlank
     private String taskTitle;
 
     @Null
