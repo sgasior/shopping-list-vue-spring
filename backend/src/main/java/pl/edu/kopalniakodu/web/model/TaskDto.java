@@ -12,12 +12,10 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 @NoArgsConstructor
-@RequiredArgsConstructor
 @AllArgsConstructor
 @Builder
 public class TaskDto extends RepresentationModel<TaskDto> {
 
-    @NonNull
     @Size(min = 3, max = 50)
     private String taskTitle;
 
@@ -25,8 +23,8 @@ public class TaskDto extends RepresentationModel<TaskDto> {
     @JsonFormat(pattern = "yyyy-MM-dd HH.mm")
     private LocalDateTime createdDate;
 
-    @Null
     private Boolean isDone;
 
+    @Null
     private Integer taskNumber;
 }

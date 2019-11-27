@@ -65,7 +65,7 @@ public class OwnerController {
             @PathVariable("ownerId") String ownerId,
             @RequestBody @Valid OwnerDto updatedOwner
     ) {
-        Owner owner = getOwnerEntityOptional(ownerId);
+        Owner owner = getOwnerEntity(ownerId);
         updatedOwner = ownerService.update(owner, updatedOwner);
 
         addBasicLinksToOwnerDto(updatedOwner);
@@ -74,7 +74,7 @@ public class OwnerController {
 
     @DeleteMapping("/{ownerId}")
     public ResponseEntity<?> deleteOwner(@PathVariable("ownerId") String ownerId) {
-        Owner owner = getOwnerEntityOptional(ownerId);
+        Owner owner = getOwnerEntity(ownerId);
         ownerService.delete(owner);
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
 
@@ -85,7 +85,7 @@ public class OwnerController {
                 .findDtoById(ownerId);
     }
 
-    private Owner getOwnerEntityOptional(String ownerId) {
+    private Owner getOwnerEntity(String ownerId) {
         return ownerService
                 .findById(ownerId);
     }

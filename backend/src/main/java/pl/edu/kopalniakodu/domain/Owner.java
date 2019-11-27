@@ -31,7 +31,7 @@ public class Owner {
     private String name;
 
     @OneToMany(
-            fetch = FetchType.EAGER,
+            fetch = FetchType.LAZY,
             cascade = CascadeType.ALL,
             mappedBy = "owner"
     )

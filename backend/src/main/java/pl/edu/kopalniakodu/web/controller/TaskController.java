@@ -18,6 +18,7 @@ import pl.edu.kopalniakodu.exceptions.TaskNotFoundException;
 import pl.edu.kopalniakodu.service.TaskService;
 import pl.edu.kopalniakodu.web.model.TaskDto;
 
+import javax.validation.Valid;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -60,6 +61,26 @@ public class TaskController {
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
+    @PostMapping("/{ownerId}/task")
+    public ResponseEntity<?> deleTask(
+            @PathVariable("ownerId") String ownerId,
+            @RequestBody @Valid TaskDto taskDto
+    ) {
+        taskDto = taskService.add(taskDto, ownerId);
+        addBasicLinksToTaskDto(taskDto, ownerId);
+        return new ResponseEntity<>(taskDto, HttpStatus.CREATED);
+    }
+
+    @PutMapping("/{ownerId}/task/{taskNumber}")
+    public ResponseEntity<?> updateTask(
+            @PathVariable("ownerId") String ownerId,
+            @PathVariable("taskNumber") int taskNumber,
+            @RequestBody @Valid TaskDto updatedTask
+    ) {
+        updatedTask = taskService.update(ownerId,taskNumber,updatedTask);
+        addBasicLinksToTaskDto(updatedTask, ownerId);
+        return new ResponseEntity<>(updatedTask, HttpStatus.OK);
+    }
 
     @ExceptionHandler(OwnerNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
