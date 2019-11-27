@@ -17,6 +17,7 @@ import java.time.LocalDateTime;
 public class TaskDto extends RepresentationModel<TaskDto> {
 
     @Size(min = 3, max = 50)
+    @NonNull
     private String taskTitle;
 
     @Null

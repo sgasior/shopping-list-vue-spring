@@ -2,6 +2,7 @@ package pl.edu.kopalniakodu.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import pl.edu.kopalniakodu.domain.Owner;
 import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
@@ -80,9 +81,11 @@ public class OwnerService {
 
     public OwnerDto update(Owner owner, OwnerDto updatedOwner) {
         updatedOwner.setId(owner.getId());
-        owner = ownerMapper.ownerDtoToOwner(updatedOwner);
-        ownerRepository.save(owner);
-        return updatedOwner;
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration().setSkipNullEnabled(true);
+        modelMapper.map(updatedOwner, owner);
+        Owner ownerSaved = ownerRepository.save(owner);
+        return ownerMapper.ownerToOwnerDto(ownerSaved);
     }
 
     private Optional<Owner> getOwnerEntity(String ownerId) {

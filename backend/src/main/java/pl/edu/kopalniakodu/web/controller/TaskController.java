@@ -77,9 +77,18 @@ public class TaskController {
             @PathVariable("taskNumber") int taskNumber,
             @RequestBody @Valid TaskDto updatedTask
     ) {
-        updatedTask = taskService.update(ownerId,taskNumber,updatedTask);
+        updatedTask = taskService.update(ownerId, taskNumber, updatedTask);
         addBasicLinksToTaskDto(updatedTask, ownerId);
         return new ResponseEntity<>(updatedTask, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{ownerId}/task/{taskNumber}")
+    public ResponseEntity<?> deleteTask(
+            @PathVariable("ownerId") String ownerId,
+            @PathVariable("taskNumber") int taskNumber
+    ) {
+        taskService.delete(ownerId, taskNumber);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
     @ExceptionHandler(OwnerNotFoundException.class)

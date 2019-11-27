@@ -51,7 +51,7 @@ public class TaskService {
         taskToBeSaved.setCreatedDate(LocalDateTime.now());
         taskToBeSaved.setIsDone(false);
         taskToBeSaved.setOwner(owner);
-        Task savedTask = taskRepository.saveAndFlush(taskToBeSaved);
+        Task savedTask = taskRepository.save(taskToBeSaved);
         return taskMapper.taskToTaskDto(savedTask);
     }
 
@@ -59,9 +59,14 @@ public class TaskService {
         Task taskEntity = getTaskByOwnerIdAndTaskNumber(ownerId, taskNumber);
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setSkipNullEnabled(true);
-        modelMapper.map(updatedTask,taskEntity);
+        modelMapper.map(updatedTask, taskEntity);
         Task savedTask = taskRepository.save(taskEntity);
         return taskMapper.taskToTaskDto(savedTask);
+    }
+
+    public void delete(String ownerId, int taskNumber) {
+        Task taskEntity = getTaskByOwnerIdAndTaskNumber(ownerId, taskNumber);
+        taskRepository.delete(taskEntity);
     }
 
     private Task getTaskByOwnerIdAndTaskNumber(String ownerId, int taskNumber) {
