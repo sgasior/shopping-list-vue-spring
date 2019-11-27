@@ -55,6 +55,8 @@ public class TaskController {
             @PathVariable("taskNumber") int taskNumber
     ) {
         TaskDto taskDto = taskService.findTask(ownerId, taskNumber);
+
+        addBasicLinksToTaskDto(taskDto, ownerId);
         return new ResponseEntity<>(taskDto, HttpStatus.OK);
     }
 
@@ -71,14 +73,23 @@ public class TaskController {
         return Collections.singletonList(new ApiError("task.notfound", ex.getMessage()));
     }
 
-    private TaskDto addLinksToTaskDto(TaskDto taskDto, String ownerId) {
+    private void addBasicLinksToTaskDto(TaskDto taskDto, String ownerId) {
+        addOtherLinksToOwnerDto(taskDto, ownerId);
+        addSelfLinkToTask(taskDto, ownerId);
+    }
+
+    private void addOtherLinksToOwnerDto(TaskDto taskDto, String ownerId) {
+        taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").withRel("tasks"));
+    }
+
+    private void addSelfLinkToTask(TaskDto taskDto, String ownerId) {
         taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").slash(taskDto.getTaskNumber()).withRel("self"));
-        taskDto.add(linkTo(TaskController.class).slash(ownerId).withRel("owner"));
-        return taskDto;
     }
 
     private void addLinksToEachTaskDto(List<TaskDto> tasks, String ownerId) {
-        tasks.stream().map(taskDto -> addLinksToTaskDto(taskDto, ownerId))
-                .collect(Collectors.toList());
+        tasks.stream().map(taskDto -> {
+            addSelfLinkToTask(taskDto, ownerId);
+            return taskDto.add(linkTo(TaskController.class).slash(ownerId).withRel("owner"));
+        }).collect(Collectors.toList());
     }
 }
