@@ -57,6 +57,7 @@ class OwnerControllerTest {
     private static final String MESSAGE_OWNER_NOT_FOUND_EXCEPTION = "Owner with this id: -1 does not exists.";
     private static final String CODE_OWNER_NOT_FOUND_EXCEPTION = "owner.notfound";
     private static final String NOT_EXISTING_OWNER_ID = "-1";
+    private static final String MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION = "must not be blank";
 
     @Autowired
     MockMvc mockMvc;
@@ -170,7 +171,7 @@ class OwnerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(ownerDtoJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError()));
     }
 
@@ -182,7 +183,7 @@ class OwnerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(ownerDtoJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError()));
     }
 
@@ -262,7 +263,7 @@ class OwnerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 
@@ -281,7 +282,7 @@ class OwnerControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(updatedOwnerJSON))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/owner/{method-name}", ownerRequestFieldsSnippet(), apiError(), ownerPathParametersSnippet()));
     }
 

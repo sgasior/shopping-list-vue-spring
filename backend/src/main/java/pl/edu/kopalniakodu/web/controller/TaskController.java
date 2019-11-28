@@ -12,14 +12,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import pl.edu.kopalniakodu.exceptions.ApiError;
-import pl.edu.kopalniakodu.exceptions.OwnerNotFoundException;
-import pl.edu.kopalniakodu.exceptions.TaskNotFoundException;
 import pl.edu.kopalniakodu.service.TaskService;
 import pl.edu.kopalniakodu.web.model.TaskDto;
 
 import javax.validation.Valid;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,24 +87,13 @@ public class TaskController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 
-    @ExceptionHandler(OwnerNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public List<ApiError> ownerNotFoundExceptionHandler(OwnerNotFoundException ex) {
-        return Collections.singletonList(new ApiError("owner.notfound", ex.getMessage()));
-    }
-
-    @ExceptionHandler(TaskNotFoundException.class)
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    public List<ApiError> taskNotFoundExceptionHandler(TaskNotFoundException ex) {
-        return Collections.singletonList(new ApiError("task.notfound", ex.getMessage()));
-    }
-
     private void addBasicLinksToTaskDto(TaskDto taskDto, String ownerId) {
         addOtherLinksToOwnerDto(taskDto, ownerId);
         addSelfLinkToTask(taskDto, ownerId);
     }
 
     private void addOtherLinksToOwnerDto(TaskDto taskDto, String ownerId) {
+        taskDto.add(linkTo(ProductController.class).slash(ownerId).slash("task").slash(taskDto.getTaskNumber()).slash("product").withRel("products"));
         taskDto.add(linkTo(TaskController.class).slash(ownerId).slash("task").withRel("tasks"));
     }
 
@@ -119,7 +104,7 @@ public class TaskController {
     private void addLinksToEachTaskDto(List<TaskDto> tasks, String ownerId) {
         tasks.stream().map(taskDto -> {
             addSelfLinkToTask(taskDto, ownerId);
-            return taskDto.add(linkTo(TaskController.class).slash(ownerId).withRel("owner"));
+            return taskDto.add(linkTo(OwnerController.class).slash(ownerId).withRel("owner"));
         }).collect(Collectors.toList());
     }
 }

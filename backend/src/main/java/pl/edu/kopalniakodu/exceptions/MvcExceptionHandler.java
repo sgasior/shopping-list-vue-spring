@@ -38,4 +38,15 @@ public class MvcExceptionHandler {
         return Collections.singletonList(new ApiError(ex.getClass().getCanonicalName(), ex.getMessage()));
     }
 
+    @ExceptionHandler(OwnerNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public List<ApiError> ownerNotFoundExceptionHandler(OwnerNotFoundException ex) {
+        return Collections.singletonList(new ApiError("owner.notfound", ex.getMessage()));
+    }
+
+    @ExceptionHandler(TaskNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public List<ApiError> taskNotFoundExceptionHandler(TaskNotFoundException ex) {
+        return Collections.singletonList(new ApiError("task.notfound", ex.getMessage()));
+    }
 }
