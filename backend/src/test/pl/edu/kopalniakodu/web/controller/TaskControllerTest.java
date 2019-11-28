@@ -63,6 +63,7 @@ class TaskControllerTest {
     private static final String CODE_TASK_NOT_FOUND_EXCEPTION = "task.notfound";
     private static final String NOT_EXISTING_OWNER_ID = "-1";
     private static final Integer NOT_EXISTING_TASK_ID = -1;
+    private static final String MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION = "must not be blank";
 
     @Autowired
     MockMvc mockMvc;
@@ -229,7 +230,7 @@ class TaskControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(taskDtoJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
     }
 
@@ -243,7 +244,7 @@ class TaskControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(taskDtoJson))
                 .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$[*].message", hasItem("must not be blank")))
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
     }
 
@@ -282,7 +283,7 @@ class TaskControllerTest {
         mockMvc.perform(delete("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
                 .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent())
-                .andDo(document("v1/owner/{method-name}",
+                .andDo(document("v1/task/{method-name}",
                         taskandOwnerPathParametersSnippet()));
     }
 
@@ -295,6 +296,119 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andDo(document("v1/task/{method-name}", apiError()));
+    }
+
+    @Test
+    public void updateTaskShouldReturnUpdatedTaskDto() throws Exception {
+
+        TaskDto newTask = TaskDto
+                .builder()
+                .taskTitle(taskDto_1.getTaskTitle())
+                .isDone(taskDto_1.getIsDone())
+                .build();
+
+        Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(newTask);
+        mockMvc.perform(put("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("taskTitle", is(taskDto_1.getTaskTitle())))
+                .andExpect(jsonPath("createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
+                .andExpect(jsonPath("isDone", is(taskDto_1.getIsDone())))
+                .andExpect(jsonPath("taskNumber", is(taskDto_1.getTaskNumber())))
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskResponseFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet()
+                ));
+    }
+
+    @Test
+    public void updateTaskShouldReturnErrorWhenTaskTitleIsEmpty() throws Exception {
+
+        Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("").build());
+        mockMvc.perform(put("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void updateTaskShouldReturnErrorWhenTaskTitleIsNull() throws Exception {
+
+        Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle(null).build());
+        mockMvc.perform(put("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+
+
+    @Test
+    public void updateTaskShouldReturnErrorWhenTaskTitleIsToShort() throws Exception {
+
+        Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("ab").build());
+        mockMvc.perform(put("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void updateTaskShouldReturnErrorWhenTaskTitleIsToLong() throws Exception {
+
+        Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("TOLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG").build());
+        mockMvc.perform(put("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void updateTaskShouldReturnErrorWhenOwnerNotFound() throws Exception {
+
+        Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
+                .thenThrow(new OwnerNotFoundException(NOT_EXISTING_OWNER_ID));
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("abcd").build());
+        mockMvc.perform(put("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
+    public void updateTaskShouldReturnErrorWhenTaskNotFound() throws Exception {
+
+        Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
+                .thenThrow(new TaskNotFoundException(NOT_EXISTING_TASK_ID));
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("abcd").build());
+        mockMvc.perform(put("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_TASK_NOT_FOUND_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
     }
 
     private RequestFieldsSnippet taskRequestFieldsSnippet() {
