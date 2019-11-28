@@ -36,9 +36,15 @@ public class DataLoader implements CommandLineRunner {
     }
 
     private void generateProducts() {
-        productRepository.save(new Product("Chleb"));
-        productRepository.save(new Product("Mleko"));
-        productRepository.save(new Product("Pomidory"));
+        Product product1 = new Product();
+        product1.setName("Chleb");
+        Product product2 = new Product();
+        product2.setName("Mleko");
+        Product product3 = new Product();
+        product3.setName("Pomidory");
+        productRepository.save(product1);
+        productRepository.save(product2);
+        productRepository.save(product1);
 
     }
 
@@ -64,7 +70,8 @@ public class DataLoader implements CommandLineRunner {
         taskRepository.save(task2);
 
         for (Product product : productRepository.findAll()) {
-            task.getProducts().add(product);
+            product.setTask(task);
+            productRepository.save(product);
         }
 
         task.setBill(billRepository.findAll().get(0));

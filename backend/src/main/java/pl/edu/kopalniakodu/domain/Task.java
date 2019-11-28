@@ -23,10 +23,9 @@ public class Task extends BaseEntity {
     private Boolean isDone;
 
     @OneToMany(
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
+            fetch = FetchType.LAZY,
+            mappedBy = "task"
     )
-    @JoinColumn(name = "task_id")
     List<Product> products = new ArrayList<>();
 
     @OneToOne(

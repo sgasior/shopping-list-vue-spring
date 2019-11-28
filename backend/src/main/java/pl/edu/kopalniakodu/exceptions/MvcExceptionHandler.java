@@ -49,4 +49,10 @@ public class MvcExceptionHandler {
     public List<ApiError> taskNotFoundExceptionHandler(TaskNotFoundException ex) {
         return Collections.singletonList(new ApiError("task.notfound", ex.getMessage()));
     }
+
+    @ExceptionHandler(ProductNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public List<ApiError> productNotFoundExceptionHandler(ProductNotFoundException ex) {
+        return Collections.singletonList(new ApiError("product.notfound", ex.getMessage()));
+    }
 }

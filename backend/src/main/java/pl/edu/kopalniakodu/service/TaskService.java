@@ -6,6 +6,7 @@ import lombok.extern.log4j.Log4j2;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 import pl.edu.kopalniakodu.domain.Owner;
+import pl.edu.kopalniakodu.domain.Product;
 import pl.edu.kopalniakodu.domain.Task;
 import pl.edu.kopalniakodu.exceptions.TaskNotFoundException;
 import pl.edu.kopalniakodu.repository.OwnerRepository;
@@ -71,12 +72,20 @@ public class TaskService {
         taskRepository.delete(taskEntity);
     }
 
-    private Task getTaskByOwnerIdAndTaskNumber(String ownerId, int taskNumber) {
+    public Task getTaskByOwnerIdAndTaskNumber(String ownerId, int taskNumber) {
         Owner owner = ownerService.findById(ownerId);
         List<Task> taskList = ownerRepository.findAllTasks(owner.getId());
         if (taskList.size() < taskNumber || taskNumber <= 0) {
             throw new TaskNotFoundException(taskNumber);
         }
         return taskList.get(taskNumber - 1);
+    }
+
+    public Task saveProductInTask(Product product, int taskNumber, String ownerId) {
+        Task taskEntity = getTaskByOwnerIdAndTaskNumber(ownerId, taskNumber);
+        taskEntity.getProducts().add(product);
+        product.setTask(taskEntity);
+        Task savedTask = taskRepository.save(taskEntity);
+        return savedTask;
     }
 }

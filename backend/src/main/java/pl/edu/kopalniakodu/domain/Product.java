@@ -1,9 +1,14 @@
 package pl.edu.kopalniakodu.domain;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import javax.persistence.Entity;
-import javax.validation.constraints.Size;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
 @Entity
 @Getter
@@ -12,8 +17,10 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class Product extends BaseEntity {
 
-    @NonNull
-    @Size(min = 3, max = 50)
     private String name;
+
+    @ManyToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "task_id")
+    private Task task;
 
 }
