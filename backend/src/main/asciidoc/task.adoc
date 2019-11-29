@@ -17,8 +17,7 @@ This is Spring REST Docs generated documentation for Shopping List Vue Spring Ap
 
 = Tasks
 
-`TaskController` makes a call to a very simple service and produces five
-documentation snippets.
+`TaskController` makes a call to a very simple service and produces five documentation snippets.
 
 == Read all owner's tasks
 
@@ -51,10 +50,65 @@ include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-fields.adoc[]
 Response Headers :
 include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-headers.adoc[]
 
-== Read single owner's task
+== Read single task
 
+=== Request
 
+When making a call to this API endpoint, the following request parameters and body can be expected.
 
+CURL request
+
+include::{snippets}/v1/task/find-one-task-should-return-task-dto/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/task/find-one-task-should-return-task-dto/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/find-one-task-should-return-task-dto/path-parameters.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/task/find-one-task-should-return-task-dto/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/task/find-one-task-should-return-task-dto/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/task/find-one-task-should-return-task-dto/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+When a task or task with the given identifier isn’t found, a 404 Not Found is provided, with a different response containing an error message.
+
+CURL request when you trying to get not existing task.
+
+include::{snippets}/v1/task/find-one-task-should-return-error-if-task-not-found/curl-request.adoc[]
+
+Http request when you trying to get not existing task.
+
+include::{snippets}/v1/task/find-one-task-should-return-error-if-task-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/find-one-task-should-return-error-if-task-not-found/path-parameters.adoc[]
+
+HTTP response when task is not found.
+include::{snippets}/v1/task/find-one-task-should-return-error-if-task-not-found/http-response.adoc[]
+
+Response Body when task is not found.
+include::{snippets}/v1/task/find-one-task-should-return-error-if-task-not-found/response-body.adoc[]
+
+Response Fields when task is not found.
+include::{snippets}/v1/task/find-one-task-should-return-error-if-task-not-found/response-fields.adoc[]
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when owner is not found:
+include::{snippets}/v1/task/find-one-task-should-return-error-if-owner-not-found/response-body.adoc[]
 
 
 //************************ POST *******************************
@@ -65,7 +119,84 @@ include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-headers.adoc[]
 //**
 
 
+== Save task
 
+When making a call to this API endpoint, the following request parameters and body can be expected.
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/task/add-task-should-return-task-dto/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/task/add-task-should-return-task-dto/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/task/add-task-should-return-task-dto/request-body.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/task/add-task-should-return-task-dto/request-fields.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/task/add-task-should-return-task-dto/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/task/add-task-should-return-task-dto/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/task/add-task-should-return-task-dto/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+Example of wrong api call:
+
+CURL request:
+
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-null/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-null/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-null/request-body.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-null/request-fields.adoc[]
+
+HTTP response:
+
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-null/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-null/response-body.adoc[]
+
+Response Fields :
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-null/response-fields.adoc[]
+
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when task title is empty:
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-empty/response-body.adoc[]
+
+Response when owner is not found:
+include::{snippets}/v1/task/add-task-should-return-error-when-owner-is-not-found/response-body.adoc[]
+
+Response when task title is to short:
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-to-short/response-body.adoc[]
+
+Response when owner is to long:
+include::{snippets}/v1/task/add-task-should-return-error-when-task-is-to-long/response-body.adoc[]
 
 
 
@@ -76,9 +207,94 @@ include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-headers.adoc[]
 //********
 //**
 
+== Update owner
 
+When making a call to this API endpoint, the following request parameters and body can be expected.
 
+=== Request
 
+CURL request
+
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/request-body.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/path-parameters.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/request-fields.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/task/update-task-should-return-updated-task-dto/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+Example of wrong api call:
+
+CURL request:
+
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/request-body.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/path-parameters.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/request-fields.adoc[]
+
+HTTP response:
+
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/response-body.adoc[]
+
+Response Fields :
+include::{snippets}/v1/task/update-task-should-return-error-when-task-not-found/response-fields.adoc[]
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when owner is not found:
+include::{snippets}/v1/task/update-task-should-return-error-when-owner-not-found/response-body.adoc[]
+
+Response when task title is empty:
+include::{snippets}/v1/task/update-task-should-return-error-when-task-title-is-empty/response-body.adoc[]
+
+Response when task title is null:
+include::{snippets}/v1/task/update-task-should-return-error-when-task-title-is-null/response-body.adoc[]
+
+Response when task title is too long:
+include::{snippets}/v1/task/update-task-should-return-error-when-task-title-is-to-long/response-body.adoc[]
+
+Response when task title is too short:
+include::{snippets}/v1/task/update-task-should-return-error-when-task-title-is-to-short/response-body.adoc[]
 
 
 //************************ DELETE *******************************
@@ -88,4 +304,57 @@ include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-headers.adoc[]
 //********
 //**
 
+== Delete owner
 
+When making a call to this API endpoint, the following request parameters and body can be expected.
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/task/delete-task/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/task/delete-task/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/delete-task/path-parameters.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/task/delete-task/http-response.adoc[]
+
+=== Errors (unsuccessful calls)
+
+Example of unsuccessful call -> when a owner with the given identifier isn’t found, a 404 Not Found is provided, with a different response containing an error message.
+
+CURL request when you trying to get not existing owner.
+
+include::{snippets}/v1/task/delete-task-should-return-error-if-owner-not-found/curl-request.adoc[]
+
+Http request:.
+
+include::{snippets}/v1/task/delete-task-should-return-error-if-owner-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/delete-task-should-return-error-if-owner-not-found/path-parameters.adoc[]
+
+HTTP response:
+include::{snippets}/v1/task/delete-task-should-return-error-if-owner-not-found/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/task/delete-task-should-return-error-if-owner-not-found/response-body.adoc[]
+
+Response Fields:
+include::{snippets}/v1/task/delete-task-should-return-error-if-owner-not-found/response-fields.adoc[]
+
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when owner is not found:
+include::{snippets}/v1/task/delete-task-should-return-error-if-task-not-found/response-body.adoc[]

@@ -176,7 +176,10 @@ class TaskControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
-                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)));
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}",
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     @Test
@@ -189,7 +192,10 @@ class TaskControllerTest {
                 .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is(MESSAGE_TASK_NOT_FOUND_EXCEPTION)))
-                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_TASK_NOT_FOUND_EXCEPTION)));
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_TASK_NOT_FOUND_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}",
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     @Test
@@ -263,6 +269,20 @@ class TaskControllerTest {
     }
 
     @Test
+    public void addTaskShouldReturnErrorWhenTaskIsToLong() throws Exception {
+
+        Mockito.when(taskService.add(any(TaskDto.class), anyString()))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle("TOLOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOONG").build());
+        mockMvc.perform(post("/api/v1/owner/{ownerId}/task", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
     public void addTaskShouldReturnErrorWhenOwnerIsNotFound() throws Exception {
 
         Mockito.when(taskService.add(any(TaskDto.class), anyString()))
@@ -295,7 +315,22 @@ class TaskControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
-                .andDo(document("v1/task/{method-name}", apiError()));
+                .andDo(document("v1/task/{method-name}",
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
+    }
+
+    @Test
+    public void deleteTaskShouldReturnErrorIfTaskNotFound() throws Exception {
+        doThrow(new TaskNotFoundException(NOT_EXISTING_TASK_ID)).when(taskService).delete(anyString(), anyInt());
+        mockMvc.perform(delete("/api/v1/owner/{ownerId}/task/{taskNumber}", ownerDto_1.getId(), taskDto_1.getTaskNumber())
+                .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound())
+                .andExpect(jsonPath("$.[0].message", is(MESSAGE_TASK_NOT_FOUND_EXCEPTION)))
+                .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_TASK_NOT_FOUND_EXCEPTION)))
+                .andDo(document("v1/task/{method-name}",
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     @Test
@@ -336,7 +371,10 @@ class TaskControllerTest {
                 .content(taskDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
-                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     @Test
@@ -350,9 +388,11 @@ class TaskControllerTest {
                 .content(taskDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
-                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
-
 
 
     @Test
@@ -366,7 +406,10 @@ class TaskControllerTest {
                 .content(taskDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
-                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     @Test
@@ -380,7 +423,10 @@ class TaskControllerTest {
                 .content(taskDtoJson))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
-                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     @Test
@@ -394,7 +440,10 @@ class TaskControllerTest {
                 .content(taskDtoJson))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
-                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     @Test
@@ -408,7 +457,10 @@ class TaskControllerTest {
                 .content(taskDtoJson))
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_TASK_NOT_FOUND_EXCEPTION)))
-                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+                .andDo(document("v1/task/{method-name}",
+                        taskRequestFieldsSnippet(),
+                        taskandOwnerPathParametersSnippet(),
+                        apiError()));
     }
 
     private RequestFieldsSnippet taskRequestFieldsSnippet() {
