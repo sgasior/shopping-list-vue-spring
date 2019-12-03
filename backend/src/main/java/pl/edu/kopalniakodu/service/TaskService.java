@@ -10,6 +10,7 @@ import pl.edu.kopalniakodu.domain.Product;
 import pl.edu.kopalniakodu.domain.Task;
 import pl.edu.kopalniakodu.exceptions.TaskNotFoundException;
 import pl.edu.kopalniakodu.repository.OwnerRepository;
+import pl.edu.kopalniakodu.repository.ProductRepository;
 import pl.edu.kopalniakodu.repository.TaskRepository;
 import pl.edu.kopalniakodu.web.mapper.TaskMapper;
 import pl.edu.kopalniakodu.web.model.TaskDto;
@@ -26,6 +27,7 @@ public class TaskService {
     private final OwnerService ownerService;
     private final OwnerRepository ownerRepository;
     private final TaskRepository taskRepository;
+    private final ProductRepository productRepository;
     private final TaskMapper taskMapper;
 
     public List<TaskDto> findAllTasks(String ownerId) {
@@ -69,6 +71,9 @@ public class TaskService {
 
     public void delete(String ownerId, int taskNumber) {
         Task taskEntity = getTaskByOwnerIdAndTaskNumber(ownerId, taskNumber);
+        taskEntity.getProducts().forEach(product -> {
+            productRepository.delete(product);
+        });
         taskRepository.delete(taskEntity);
     }
 
