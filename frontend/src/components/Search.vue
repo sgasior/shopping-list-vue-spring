@@ -13,7 +13,6 @@
 </template>
 
 <script>
-
 export default {
   data() {
     return {};
@@ -22,13 +21,15 @@ export default {
 </script>
 
 <style>
-
-.search-task{
+.search-task {
   margin-top: 6rem;
-  width: 50%;
+  width: 40%;
   margin-left: auto;
   margin-right: auto;
 }
 
-
+.search-task .input-field i {
+  position: absolute;
+  right: 2rem;
+}
 </style>

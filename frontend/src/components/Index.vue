@@ -3,28 +3,14 @@
     <div class="container">
       <Search />
       <div class="row">
-        <div class="col s12 m4 l3">
+        <div class="col s12 m4 l3" v-for="(task,index) in taskList" :key="index">
           <div class="card">
+            <i class="material-icons delete" @click="deleteTask(task.taskNumber)">delete</i>
             <div class="card-content">
-              <span class="card-title center">Tommorow party</span>
-              <p class="task-date">Creation date: 1.12.2019</p>
+              <span class="card-title center">{{task.taskTitle}}</span>
+              <p class="task-date">Creation date: {{task.createdDate}}</p>
               <ul class="collection">
-                <li class="collection-item">
-                  <p class="center">
-                    <label>
-                      <input type="checkbox" class="filled-in" checked="checked" />
-                      <span>Mleko dsaasss</span>
-                    </label>
-                  </p>
-                </li>
-                <li class="collection-item">
-                  <p class="center">
-                    <label>
-                      <input type="checkbox" class="filled-in" checked="checked" />
-                      <span>Mleko dsaasss</span>
-                    </label>
-                  </p>
-                </li>
+                <Product :taskNumber="task.taskNumber" />
               </ul>
               <a class="btn-floating halfway-fab waves-effect waves-light grey darken-1">
                 <i class="material-icons">edit</i>
@@ -39,16 +25,37 @@
 </template>
 
 <script>
+import { APIService } from "@/api/APIService";
 import Search from "@/components/Search";
 import Pagination from "@/components/Pagination";
+import Product from "@/components/card/Product";
+const apiService = new APIService();
+
 export default {
   name: "Index",
   data() {
-    return {};
+    return {
+      taskList: []
+    };
   },
   components: {
     Search,
-    Pagination
+    Pagination,
+    Product
+  },
+  methods: {
+    deleteTask(taskNumber) {
+      apiService.deleteTask(taskNumber).then(() => {
+        this.taskList = this.taskList.filter(task => {
+          return task.taskNumber != taskNumber;
+        });
+      });
+    }
+  },
+  created() {
+    apiService.getTasks().then(taskList => {
+      taskList.forEach(task => this.taskList.push(task));
+    });
   }
 };
 </script>
@@ -67,6 +74,10 @@ export default {
   padding-right: 0;
 }
 
+div.card-title {
+  padding: 1rem;
+}
+
 .task-done {
   text-decoration: line-through;
 }
@@ -75,6 +86,12 @@ export default {
   color: #757575;
   font-size: 0.8rem;
   text-align: center;
+}
+
+.delete {
+  position: absolute;
+  right: 6px;
+  color: #757575;
 }
 </style>
 
