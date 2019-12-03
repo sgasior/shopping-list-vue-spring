@@ -3,7 +3,7 @@
     <li class="collection-item" v-for="(product,index) in productList" :key="index">
       <p class="center">
         <label>
-          <input type="checkbox" class="filled-in" checked="checked" />
+          <input type="checkbox" class="filled-in" checked="checked" v-model="product.isDone" />
           <span>{{product.name}}</span>
         </label>
       </p>
@@ -19,18 +19,27 @@ export default {
   name: "Product",
   data() {
     return {
-      productList: []
+      productList: [],
+      ownerId: null
     };
   },
   props: {
-    taskNumber: Number
+    taskNumber: Number,
+    products: Array
   },
   created() {
-    apiService.getProducts(this.taskNumber).then(productList => {
-      productList.forEach(product => {
-        this.productList.push(product);
-      });
-    });
+    this.ownerId = this.$route.params.ownerId;
+    if (this.ownerId == null) {
+      this.productList = this.products;
+    } else {
+      apiService
+        .getProducts(this.ownerId, this.taskNumber)
+        .then(productList => {
+          productList.forEach(product => {
+            this.productList.push(product);
+          });
+        });
+    }
   }
 };
 </script>

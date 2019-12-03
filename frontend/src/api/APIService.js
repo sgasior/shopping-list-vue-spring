@@ -5,22 +5,22 @@ export class APIService {
 
     }
 
-    getTasks() {
-        const url = `/api/v1/owner/e190095d-2507-4e28-9646-2ae7f618ca13/task`;
+    getTasks(ownerId) {
+        const url = `/api/v1/owner/${ownerId}/task`;
         return axios
             .get(url)
             .then(response => response.data._embedded.taskDtoList);
     }
 
-    getProducts(taskNumber) {
-        const url = `/api/v1/owner/e190095d-2507-4e28-9646-2ae7f618ca13/task/${taskNumber}/product`;
+    getProducts(ownerId, taskNumber) {
+        const url = `/api/v1/owner/${ownerId}/task/${taskNumber}/product`;
         return axios
             .get(url)
             .then(response => response.data._embedded.productDtoList);
     }
 
-    deleteTask(taskNumber){
-        const url = `/api/v1/owner/e190095d-2507-4e28-9646-2ae7f618ca13/task/${taskNumber}`;
+    deleteTask(ownerId, taskNumber) {
+        const url = `/api/v1/owner/${ownerId}/task/${taskNumber}`;
         return axios.delete(url);
     }
 

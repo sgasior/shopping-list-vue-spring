@@ -10,7 +10,7 @@
               <span class="card-title center">{{task.taskTitle}}</span>
               <p class="task-date">Creation date: {{task.createdDate}}</p>
               <ul class="collection">
-                <Product :taskNumber="task.taskNumber" />
+                <Product :taskNumber="task.taskNumber" :products="taskList[index].productList" />
               </ul>
               <a class="btn-floating halfway-fab waves-effect waves-light grey darken-1">
                 <i class="material-icons">edit</i>
@@ -35,7 +35,25 @@ export default {
   name: "Index",
   data() {
     return {
-      taskList: []
+      taskList: [
+        {
+          createdDate: "2019-12-03 16.11",
+          isDone: false,
+          taskNumber: 0,
+          taskTitle: "Zakupy testowe",
+          productList: [
+            {
+              name: "Kukurydza",
+              isDone: true
+            },
+            {
+              name: "Pepsi",
+              isDone: false
+            }
+          ]
+        }
+      ],
+      ownerId: null
     };
   },
   components: {
@@ -45,15 +63,23 @@ export default {
   },
   methods: {
     deleteTask(taskNumber) {
-      apiService.deleteTask(taskNumber).then(() => {
-        this.taskList = this.taskList.filter(task => {
-          return task.taskNumber != taskNumber;
+      if (this.ownerId == null) {
+        this.deleteTaskLocaly(taskNumber);
+      } else {
+        apiService.deleteTask(this.ownerId, taskNumber).then(() => {
+          this.deleteTaskLocaly(taskNumber);
         });
+      }
+    },
+    deleteTaskLocaly(taskNumber) {
+      this.taskList = this.taskList.filter(task => {
+        return task.taskNumber != taskNumber;
       });
     }
   },
   created() {
-    apiService.getTasks().then(taskList => {
+    this.ownerId = this.$route.params.ownerId;
+    apiService.getTasks(this.ownerId).then(taskList => {
       taskList.forEach(task => this.taskList.push(task));
     });
   }
@@ -92,6 +118,7 @@ div.card-title {
   position: absolute;
   right: 6px;
   color: #757575;
+  cursor: pointer;
 }
 </style>
 

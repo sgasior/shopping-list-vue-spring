@@ -8,6 +8,11 @@ const routes = [
     path: '/',
     name: 'Index',
     component: Index
+  },
+  {
+    path: '/:ownerId',
+    name: 'IndexWithOwnerId',
+    component: Index
   }
 ]
 
