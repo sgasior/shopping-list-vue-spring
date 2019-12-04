@@ -23,4 +23,6 @@ public class Product extends BaseEntity {
     @JoinColumn(name = "task_id")
     private Task task;
 
+    private Boolean isDone;
+
 }

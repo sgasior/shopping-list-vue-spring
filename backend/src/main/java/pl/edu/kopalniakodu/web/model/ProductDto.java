@@ -19,4 +19,6 @@ public class ProductDto extends RepresentationModel<ProductDto> {
 
     @Null
     private Integer productNumber;
+
+    private Boolean isDone;
 }

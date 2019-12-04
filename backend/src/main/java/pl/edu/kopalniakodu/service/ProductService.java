@@ -49,6 +49,9 @@ public class ProductService {
 
     public ProductDto add(ProductDto productDto, int taskNumber, String ownerId) {
 
+        if (productDto.getIsDone() == null) {
+            productDto.setIsDone(false);
+        }
         Product savedProduct = productRepository.save(productMapper.productDtoToProduct(productDto));
         Task savedTask = taskService.saveProductInTask(savedProduct, taskNumber, ownerId);
         int indexOfLastProduct = savedTask.getProducts().size() - 1;
