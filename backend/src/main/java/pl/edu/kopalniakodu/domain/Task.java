@@ -22,6 +22,8 @@ public class Task extends BaseEntity {
 
     private Boolean isDone;
 
+    private String hexColor;
+
     @OneToMany(
             fetch = FetchType.LAZY,
             mappedBy = "task"

@@ -3,6 +3,7 @@ package pl.edu.kopalniakodu.web.model;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.*;
 import org.springframework.hateoas.RepresentationModel;
+import pl.edu.kopalniakodu.domain.validator.HexColor;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Null;
@@ -26,6 +27,9 @@ public class TaskDto extends RepresentationModel<TaskDto> {
     private LocalDateTime createdDate;
 
     private Boolean isDone;
+
+    @HexColor
+    private String hexColor;
 
     @Null
     private Integer taskNumber;

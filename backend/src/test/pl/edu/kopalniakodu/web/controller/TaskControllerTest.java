@@ -94,6 +94,7 @@ class TaskControllerTest {
                 .createdDate(LocalDateTime.now())
                 .isDone(false)
                 .taskNumber(1)
+                .hexColor("#000000")
                 .build();
 
         taskDto_2 = TaskDto
@@ -102,6 +103,7 @@ class TaskControllerTest {
                 .createdDate(LocalDateTime.now())
                 .isDone(true)
                 .taskNumber(2)
+                .hexColor("#ffffff")
                 .build();
 
     }
@@ -119,10 +121,12 @@ class TaskControllerTest {
                 .andExpect(jsonPath("$._embedded.taskDtoList[0].createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
                 .andExpect(jsonPath("$._embedded.taskDtoList[0].isDone", is(taskDto_1.getIsDone())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[0].taskNumber", is(taskDto_1.getTaskNumber())))
+                .andExpect(jsonPath("$._embedded.taskDtoList[0].hexColor", is(taskDto_1.getHexColor())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[1].taskTitle", is(taskDto_2.getTaskTitle())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[1].createdDate", is(taskDto_2.getCreatedDate().format(FORMATTER))))
                 .andExpect(jsonPath("$._embedded.taskDtoList[1].isDone", is(taskDto_2.getIsDone())))
                 .andExpect(jsonPath("$._embedded.taskDtoList[1].taskNumber", is(taskDto_2.getTaskNumber())))
+                .andExpect(jsonPath("$._embedded.taskDtoList[1].hexColor", is(taskDto_2.getHexColor())))
                 .andExpect(header().longValue("X-Tasks-Total", taskDtoList.size()))
                 .andDo(document("v1/task/{method-name}",
                         taskPageHeadersSnippet(),
@@ -160,6 +164,7 @@ class TaskControllerTest {
                 .andExpect(jsonPath("createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
                 .andExpect(jsonPath("isDone", is(taskDto_1.getIsDone())))
                 .andExpect(jsonPath("taskNumber", is(taskDto_1.getTaskNumber())))
+                .andExpect(jsonPath("hexColor", is(taskDto_1.getHexColor())))
                 .andDo(document("v1/task/{method-name}",
                         taskResponseFieldsSnippet(),
                         taskandOwnerPathParametersSnippet()
@@ -205,6 +210,7 @@ class TaskControllerTest {
                 .builder()
                 .taskTitle(taskDto_1.getTaskTitle())
                 .isDone(taskDto_1.getIsDone())
+                .hexColor(taskDto_1.getHexColor())
                 .build();
 
         Mockito.when(taskService.add(any(TaskDto.class), anyString()))
@@ -218,6 +224,7 @@ class TaskControllerTest {
                 .andExpect(jsonPath("createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
                 .andExpect(jsonPath("isDone", is(taskDto_1.getIsDone())))
                 .andExpect(jsonPath("taskNumber", is(taskDto_1.getTaskNumber())))
+                .andExpect(jsonPath("hexColor", is(taskDto_1.getHexColor())))
                 .andDo(document("v1/task/{method-name}",
                         taskRequestFieldsSnippet(),
                         taskResponseFieldsSnippet(),
@@ -283,6 +290,20 @@ class TaskControllerTest {
     }
 
     @Test
+    public void addTaskShouldReturnErrorWhenHexColorHasBadFormat() throws Exception {
+
+        Mockito.when(taskService.add(any(TaskDto.class), anyString()))
+                .thenReturn(taskDto_1);
+        String taskDtoJson = objectMapper.writeValueAsString(TaskDto.builder().taskTitle(taskDto_1.getTaskTitle()).hexColor("#00").build());
+        mockMvc.perform(post("/api/v1/owner/{ownerId}/task", ownerDto_1.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(taskDtoJson))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$[*].message", hasItem("Hex color code is not valid")))
+                .andDo(document("v1/task/{method-name}", taskRequestFieldsSnippet(), apiError()));
+    }
+
+    @Test
     public void addTaskShouldReturnErrorWhenOwnerIsNotFound() throws Exception {
 
         Mockito.when(taskService.add(any(TaskDto.class), anyString()))
@@ -340,6 +361,7 @@ class TaskControllerTest {
                 .builder()
                 .taskTitle(taskDto_1.getTaskTitle())
                 .isDone(taskDto_1.getIsDone())
+                .hexColor(taskDto_1.getHexColor())
                 .build();
 
         Mockito.when(taskService.update(anyString(), anyInt(), any(TaskDto.class)))
@@ -353,6 +375,7 @@ class TaskControllerTest {
                 .andExpect(jsonPath("createdDate", is(taskDto_1.getCreatedDate().format(FORMATTER))))
                 .andExpect(jsonPath("isDone", is(taskDto_1.getIsDone())))
                 .andExpect(jsonPath("taskNumber", is(taskDto_1.getTaskNumber())))
+                .andExpect(jsonPath("hexColor", is(taskDto_1.getHexColor())))
                 .andDo(document("v1/task/{method-name}",
                         taskRequestFieldsSnippet(),
                         taskResponseFieldsSnippet(),
@@ -482,6 +505,10 @@ class TaskControllerTest {
                         .attributes(key("constraints")
                                 .value(constraintDescriptions
                                         .descriptionsForProperty("isDone"))).optional(),
+                fieldWithPath("hexColor").description("Color of task")
+                        .attributes(key("constraints")
+                                .value(constraintDescriptions
+                                        .descriptionsForProperty("hexColor"))).optional(),
                 fieldWithPath("links").description("Condition to check if task is done").ignored()
         );
     }
@@ -507,6 +534,7 @@ class TaskControllerTest {
                 fieldWithPath("_embedded.taskDtoList[].createdDate").description("Creation date of the task"),
                 fieldWithPath("_embedded.taskDtoList[].isDone").description("Information about that if taks is done or not"),
                 fieldWithPath("_embedded.taskDtoList[].taskNumber").description("Number of owner's task"),
+                fieldWithPath("_embedded.taskDtoList[].hexColor").description("Color of task"),
                 subsectionWithPath("_embedded.taskDtoList[]._links").description("Task resource <<Resource>>").ignored(),
                 subsectionWithPath("_links").description("Links <<Resource>>").ignored()
         );
@@ -519,6 +547,7 @@ class TaskControllerTest {
                 fieldWithPath("createdDate").description("Creation date of the task"),
                 fieldWithPath("isDone").description("Information about that if taks is done or not"),
                 fieldWithPath("taskNumber").description("Number of owner's task"),
+                fieldWithPath("hexColor").description("Color of task"),
                 subsectionWithPath("_links").description("Links <<Resource>>").ignored()
         );
     }
