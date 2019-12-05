@@ -41,6 +41,6 @@ export default {
     }
 
     .pagination li.active{
-        background-color: #212121;
+        background-color: #e6a400;
     }
 </style>

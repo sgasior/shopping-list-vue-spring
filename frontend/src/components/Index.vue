@@ -6,13 +6,13 @@
         <div class="col s12 m4 l3" v-for="(task,index) in taskList" :key="index">
           <div class="card">
             <i class="material-icons delete" @click="deleteTask(task.taskNumber)">delete</i>
-            <div class="card-content">
+            <div class="card-content" :style="{backgroundColor: task.hexColor}">
               <span class="card-title center">{{task.taskTitle}}</span>
               <p class="task-date">Creation date: {{task.createdDate}}</p>
               <ul class="collection">
                 <Product :task="task" />
               </ul>
-              <a class="btn-floating halfway-fab waves-effect waves-light grey darken-1">
+              <a class="btn-floating halfway-fab waves-effect waves-light edit-task">
                 <i class="material-icons">edit</i>
               </a>
             </div>
@@ -80,13 +80,16 @@ export default {
   created() {
     this.ownerId = this.$route.params.ownerId;
     apiService.getTasks(this.ownerId).then(taskList => {
-      taskList.forEach(task => this.taskList.push(task));
+      taskList.forEach(task =>this.taskList.push(task));
     });
   }
 };
 </script>
 
 <style>
+.row {
+  margin-top: 6rem;
+}
 .collection {
   margin: 2rem 0;
 }
@@ -113,8 +116,42 @@ div.card-title {
 .delete {
   position: absolute;
   right: 6px;
-  color: #757575;
   cursor: pointer;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-image: -moz-linear-gradient(top, #801336 0%, #e6a400 100%);
+  background-image: -webkit-linear-gradient(top, #801336 0%, #e6a400 100%);
+  background-image: -o-linear-gradient(top, #801336 0%, #e6a400 100%);
+  background-image: -ms-linear-gradient(top, #801336 0%, #e6a400 100%);
+  background-image: linear-gradient(
+    to bottom,
+    #801336 0%,
+    #c72c41 70%,
+    #e6a400 100%
+  );
+  transition: all 0.2;
+}
+
+.delete:hover {
+  transform: scale(1.02);
+  opacity: 0.9;
+}
+
+.edit-task {
+  background-color: #3fc5f0;
+}
+
+.edit-task:hover {
+  background-color: #42dee1;
+}
+
+.card-content {
+  /* colors: */
+  /* fffde1 */
+  /* f6fea1 */
+  /* ffb270 */
+  /* e6f7f7 */
+  /* f7beff */
 }
 </style>
 

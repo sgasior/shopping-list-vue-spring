@@ -46,4 +46,8 @@ export default {
 [type="checkbox"] + span:not(.lever) {
   padding-left: 42%;
 }
+
+.collection .collection-item{
+  background-color: inherit;
+}
 </style>
