@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <li class="collection-item" v-for="(product,index) in productList" :key="index">
-      <p class="center">
+  <div v-if="this.dataLoaded">
+    <li class="collection-item" v-for="(product,index) in task.productList" :key="index">
+      <p>
         <label>
           <input type="checkbox" class="filled-in" checked="checked" v-model="product.isDone" />
           <span>{{product.name}}</span>
@@ -19,25 +19,23 @@ export default {
   name: "Product",
   data() {
     return {
-      productList: [],
-      ownerId: null
+      ownerId: null,
+      dataLoaded: false
     };
   },
   props: {
-    taskNumber: Number,
-    products: Array
+    task: Object
   },
-  created() {
+  created () {
     this.ownerId = this.$route.params.ownerId;
     if (this.ownerId == null) {
       this.productList = this.products;
     } else {
       apiService
-        .getProducts(this.ownerId, this.taskNumber)
+        .getProducts(this.ownerId, this.task.taskNumber)
         .then(productList => {
-          productList.forEach(product => {
-            this.productList.push(product);
-          });
+          this.task.productList = productList;
+          this.dataLoaded=true
         });
     }
   }
@@ -45,4 +43,7 @@ export default {
 </script>
 
 <style>
+[type="checkbox"] + span:not(.lever) {
+  padding-left: 42%;
+}
 </style>

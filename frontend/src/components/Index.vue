@@ -10,7 +10,7 @@
               <span class="card-title center">{{task.taskTitle}}</span>
               <p class="task-date">Creation date: {{task.createdDate}}</p>
               <ul class="collection">
-                <Product :taskNumber="task.taskNumber" :products="taskList[index].productList" />
+                <Product :task="task" />
               </ul>
               <a class="btn-floating halfway-fab waves-effect waves-light grey darken-1">
                 <i class="material-icons">edit</i>
@@ -87,10 +87,6 @@ export default {
 </script>
 
 <style>
-.card {
-  margin: 6rem 0;
-}
-
 .collection {
   margin: 2rem 0;
 }
