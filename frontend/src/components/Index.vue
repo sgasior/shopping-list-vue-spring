@@ -89,9 +89,11 @@ export default {
   },
   created() {
     this.ownerId = this.$route.params.ownerId;
-    apiService.getTasks(this.ownerId).then(taskList => {
-      taskList.forEach(task => this.taskList.push(task));
-    });
+    if (this.ownerId != null) {
+      apiService.getTasks(this.ownerId).then(taskList => {
+        taskList.forEach(task => this.taskList.push(task));
+      });
+    }
   },
   computed: {
     filteredTaskList() {

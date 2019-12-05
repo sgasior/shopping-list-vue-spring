@@ -26,17 +26,17 @@ export default {
   props: {
     task: Object
   },
-  created () {
+  created() {
     this.ownerId = this.$route.params.ownerId;
-    if (this.ownerId == null) {
-      this.productList = this.products;
-    } else {
+    if ((this.ownerId != null) & (this.task.productList == null)) {
       apiService
         .getProducts(this.ownerId, this.task.taskNumber)
         .then(productList => {
           this.task.productList = productList;
-          this.dataLoaded=true
+          this.dataLoaded = true;
         });
+    } else {
+      this.dataLoaded = true;
     }
   }
 };
