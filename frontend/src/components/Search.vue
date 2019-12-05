@@ -2,7 +2,7 @@
   <div class="search-task">
     <form>
       <div class="input-field">
-        <input id="search" type="search" required />
+        <input id="search" type="search" required v-model="search" @keyup="clicked()" />
         <label class="label-icon" for="search">
           <i class="material-icons">search</i>
         </label>
@@ -15,7 +15,14 @@
 <script>
 export default {
   data() {
-    return {};
+    return {
+      search: ""
+    };
+  },
+  methods: {
+    clicked() {
+      this.$emit("changeSearch", this.search);
+    }
   }
 };
 </script>

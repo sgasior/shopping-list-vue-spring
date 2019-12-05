@@ -1,9 +1,9 @@
 <template>
   <main>
     <div class="container">
-      <Search />
+      <Search v-on:changeSearch="updateSearch($event)" />
       <div class="row">
-        <div class="col s12 m4 l3" v-for="(task,index) in taskList" :key="index">
+        <div class="col s12 m4 l3" v-for="(task,index) in filteredTaskList" :key="index">
           <div class="card">
             <i class="material-icons delete" @click="deleteTask(task.taskNumber)">delete</i>
             <div class="card-content" :style="{backgroundColor: task.hexColor}">
@@ -35,23 +35,24 @@ export default {
   name: "Index",
   data() {
     return {
+      search: "",
       taskList: [
-        {
-          createdDate: "2019-12-03 16.11",
-          isDone: false,
-          taskNumber: 0,
-          taskTitle: "Zakupy testowe",
-          productList: [
-            {
-              name: "Kukurydza",
-              isDone: true
-            },
-            {
-              name: "Pepsi",
-              isDone: false
-            }
-          ]
-        }
+        // {
+        //   createdDate: "2019-12-03 16.11",
+        //   isDone: false,
+        //   taskNumber: 0,
+        //   taskTitle: "Zakupy testowe",
+        //   productList: [
+        //     {
+        //       name: "Kukurydza",
+        //       isDone: true
+        //     },
+        //     {
+        //       name: "Pepsi",
+        //       isDone: false
+        //     }
+        //   ]
+        // }
       ],
       ownerId: null
     };
@@ -75,13 +76,29 @@ export default {
       this.taskList = this.taskList.filter(task => {
         return task.taskNumber != taskNumber;
       });
+      this.taskList.forEach(task => {
+        if (task.taskNumber > taskNumber) {
+          task.taskNumber--;
+          console.log(task.taskNumber);
+        }
+      });
+    },
+    updateSearch(search) {
+      this.search = search;
     }
   },
   created() {
     this.ownerId = this.$route.params.ownerId;
     apiService.getTasks(this.ownerId).then(taskList => {
-      taskList.forEach(task =>this.taskList.push(task));
+      taskList.forEach(task => this.taskList.push(task));
     });
+  },
+  computed: {
+    filteredTaskList() {
+      return this.taskList.filter(task =>
+        task.taskTitle.toLowerCase().includes(this.search.toLowerCase())
+      );
+    }
   }
 };
 </script>
@@ -129,7 +146,7 @@ div.card-title {
     #c72c41 70%,
     #e6a400 100%
   );
-  transition: all 0.2;
+  transition: all 0.2s;
 }
 
 .delete:hover {
