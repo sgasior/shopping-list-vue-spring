@@ -24,5 +24,30 @@ export class APIService {
         return axios.delete(url);
     }
 
+    async createOwner(name) {
+        const url = `/api/v1/owner`;
+        return axios.post(url, {
+            name: name
+        });
+    }
+
+    async saveTaskInOwner(ownerId, taskToBeSaved) {
+        const url = `/api/v1/owner/${ownerId}/task`;
+        return axios.post(url, {
+            taskTitle: taskToBeSaved.taskTitle,
+            isDone: taskToBeSaved.isDone,
+            hexColor: taskToBeSaved.hexColor,
+        });
+    }
+
+    async saveProductInTask(ownerId, taskNumber, productToBeSaved) {
+        const url = `/api/v1/owner/${ownerId}/task/${taskNumber}/product`;
+        return axios.post(url, {
+            name: productToBeSaved.name,
+            isDone: productToBeSaved.isDone
+        });
+    }
+
+
 
 }

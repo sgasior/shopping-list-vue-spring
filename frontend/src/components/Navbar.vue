@@ -4,7 +4,10 @@
       <a href="#!" class="brand-logo center">Shopping list</a>
       <ul class="right" v-if="!this.ownerId">
         <li>
-          <a class="waves-effect waves-light btn-large btn-publish">Publish Task</a>
+          <a
+            class="waves-effect waves-light btn-large btn-publish"
+            @click="publishTask()"
+          >Publish Task</a>
         </li>
       </ul>
     </div>
@@ -17,12 +20,18 @@
 </template>
 
 <script>
+import { EventBus } from "../event-bus.js";
 export default {
   name: "Navbar",
   data() {
     return {
       ownerId: null
     };
+  },
+  methods: {
+    publishTask() {
+      EventBus.$emit("publish-task", "Piotr");
+    }
   },
   created() {
     this.ownerId = this.$route.params.ownerId;

@@ -30,6 +30,7 @@ import Search from "@/components/Search";
 import Pagination from "@/components/Pagination";
 import Product from "@/components/card/Product";
 const apiService = new APIService();
+import { EventBus } from "../event-bus.js";
 
 export default {
   name: "Index",
@@ -79,15 +80,52 @@ export default {
       this.taskList.forEach(task => {
         if (task.taskNumber > taskNumber) {
           task.taskNumber--;
-          console.log(task.taskNumber);
         }
       });
     },
     updateSearch(search) {
       this.search = search;
+    },
+    async publishAllTasks(name) {
+      const ownerId = await apiService
+        .createOwner(name)
+        .then(response => response.data.id);
+      for (const task of this.taskList) {
+        const savedTaskNumber = await apiService
+          .saveTaskInOwner(ownerId, task)
+          .then(response => response.data.taskNumber);
+        task.productList.forEach(product => {
+          apiService.saveProductInTask(ownerId, savedTaskNumber, product);
+        });
+      }
+      this.$router.push({
+        name: "IndexWithOwnerId",
+        params: { ownerId: ownerId }
+      });
+    },
+    test() {
+      this.taskList.push({
+        createdDate: "2019-12-03 16.11",
+        isDone: false,
+        taskNumber: 3,
+        taskTitle: "Zakupy testowe",
+        productList: [
+          {
+            name: "Kukurydza",
+            isDone: true
+          },
+          {
+            name: "Pepsi",
+            isDone: false
+          }
+        ]
+      });
     }
   },
   created() {
+    EventBus.$on("publish-task", name => {
+      this.publishAllTasks(name);
+    });
     this.ownerId = this.$route.params.ownerId;
     if (this.ownerId != null) {
       apiService.getTasks(this.ownerId).then(taskList => {
