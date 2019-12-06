@@ -20,6 +20,7 @@
         </div>
       </div>
       <Pagination />
+      <button @click="test()">New item</button>
     </div>
   </main>
 </template>
@@ -41,7 +42,7 @@ export default {
         // {
         //   createdDate: "2019-12-03 16.11",
         //   isDone: false,
-        //   taskNumber: 0,
+        //   taskNumber: 3,
         //   taskTitle: "Zakupy testowe",
         //   productList: [
         //     {

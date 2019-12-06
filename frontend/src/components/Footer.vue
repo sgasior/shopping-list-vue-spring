@@ -1,5 +1,5 @@
 <template>
-  <footer class="teal">
+  <footer>
     Made with
     <span class="heart">❤</span> in Poland
   </footer>
@@ -21,5 +21,6 @@ footer {
   position: absolute;
   bottom: 0;
   width: 100%;
+  background: linear-gradient(to bottom, #a5d6a7 0%, #9ccc65 30%, #827717 100%);
 }
 </style>
