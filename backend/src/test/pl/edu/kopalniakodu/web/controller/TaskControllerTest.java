@@ -509,7 +509,7 @@ class TaskControllerTest {
                         .attributes(key("constraints")
                                 .value(constraintDescriptions
                                         .descriptionsForProperty("hexColor"))).optional(),
-                fieldWithPath("links").description("Condition to check if task is done").ignored()
+                fieldWithPath("links").description("Link <<Resources>>").ignored()
         );
     }
 
