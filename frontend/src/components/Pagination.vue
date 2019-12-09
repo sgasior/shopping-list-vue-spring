@@ -25,31 +25,26 @@
 <script>
 export default {
   data() {
-    return {
-      // pageNumber: 1
-    };
+    return {};
   },
   methods: {
     nextPage() {
       if (this.pageCount == this.pageNumber || this.pageCount < 1) {
         return;
       }
-      this.pageNumber++;
-      this.$emit("pageNumber", this.pageNumber);
+      this.$emit("goToPage", this.pageNumber + 1);
     },
     prevPage() {
       if (this.pageNumber == 1) {
         return;
       }
-      this.pageNumber--;
-      this.$emit("pageNumber", this.pageNumber);
+      this.$emit("goToPage", this.pageNumber - 1);
     },
     goToPage(pageNumber) {
       if (this.pageCount < 2) {
         return;
       }
-      this.pageNumber = pageNumber;
-      this.$emit("pageNumber", pageNumber);
+      this.$emit("goToPage", pageNumber);
     }
   },
   props: {

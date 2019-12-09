@@ -20,7 +20,7 @@
         </div>
       </div>
       <Pagination
-        v-on:pageNumber="updatePageNumber($event)"
+        v-on:goToPage="goToPageNumber($event)"
         :pageCount="pageCount"
         :pageNumber="pageNumber"
       />
@@ -89,8 +89,12 @@ export default {
           task.taskNumber--;
         }
       });
+      if (this.paginatedData.length == 0) {
+        this.pageNumber--;
+      }
     },
     updateSearch(search) {
+      this.pageNumber = 1;
       this.search = search;
     },
     async publishAllTasks(name) {
@@ -110,7 +114,7 @@ export default {
         params: { ownerId: ownerId }
       });
     },
-    updatePageNumber(pageNumber) {
+    goToPageNumber(pageNumber) {
       this.pageNumber = pageNumber;
     },
     test() {
@@ -145,7 +149,6 @@ export default {
   },
   computed: {
     filteredTaskList() {
-      this.pageNumber = 1;
       return this.taskList.filter(task =>
         task.taskTitle.toLowerCase().includes(this.search.toLowerCase())
       );
