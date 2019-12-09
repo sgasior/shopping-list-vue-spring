@@ -1,21 +1,17 @@
 <template>
   <ul class="pagination center">
     <li class="waves-effect" :class="{'disabled': pageNumber==1}">
-      <a href="#!" @click="prevPage()">
+      <a href="#!" @click.prevent="prevPage()">
         <i class="material-icons">chevron_left</i>
       </a>
     </li>
     <span v-for="(count,index) in pageCountToShow" :key="index">
-      <li
-        class="waves-effect"
-        v-bind:class="{'active': pageNumber==count}"
-        @click="goToPage(count)"
-      >
-        <a href="#!">{{count}}</a>
+      <li class="waves-effect" v-bind:class="{'active': pageNumber==count}">
+        <a href="#!" @click.prevent="goToPage(count)">{{count}}</a>
       </li>
     </span>
     <li class="waves-effect" :class="{'disabled':(pageNumber==pageCount) || (pageCount<1)}">
-      <a href="#!" @click="nextPage()">
+      <a href="#!" @click.prevent="nextPage()">
         <i class="material-icons">chevron_right</i>
       </a>
     </li>
