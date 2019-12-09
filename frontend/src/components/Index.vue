@@ -3,7 +3,7 @@
     <div class="container">
       <Search v-on:changeSearch="updateSearch($event)" />
       <div class="row">
-        <div class="col s12 m4 l3" v-for="(task,index) in filteredTaskList" :key="index">
+        <div class="col s12 m4 l3" v-for="(task,index) in paginatedData" :key="index">
           <div class="card">
             <i class="material-icons delete" @click="deleteTask(task.taskNumber)">delete</i>
             <div class="card-content" :style="{backgroundColor: task.hexColor}">
@@ -19,7 +19,11 @@
           </div>
         </div>
       </div>
-      <Pagination />
+      <Pagination
+        v-on:pageNumber="updatePageNumber($event)"
+        :pageCount="pageCount"
+        :pageNumber="pageNumber"
+      />
       <button @click="test()">New item</button>
     </div>
   </main>
@@ -56,7 +60,9 @@ export default {
         //   ]
         // }
       ],
-      ownerId: null
+      ownerId: null,
+      pageNumber: 1,
+      maxTasksPerPage: 8
     };
   },
   components: {
@@ -104,6 +110,9 @@ export default {
         params: { ownerId: ownerId }
       });
     },
+    updatePageNumber(pageNumber) {
+      this.pageNumber = pageNumber;
+    },
     test() {
       this.taskList.push({
         createdDate: "2019-12-03 16.11",
@@ -136,9 +145,20 @@ export default {
   },
   computed: {
     filteredTaskList() {
+      this.pageNumber = 1;
       return this.taskList.filter(task =>
         task.taskTitle.toLowerCase().includes(this.search.toLowerCase())
       );
+    },
+    pageCount() {
+      let l = this.filteredTaskList.length,
+        s = this.maxTasksPerPage;
+      return Math.ceil(l / s);
+    },
+    paginatedData() {
+      const start = (this.pageNumber - 1) * this.maxTasksPerPage,
+        end = start + this.maxTasksPerPage;
+      return this.filteredTaskList.slice(start, end);
     }
   }
 };
