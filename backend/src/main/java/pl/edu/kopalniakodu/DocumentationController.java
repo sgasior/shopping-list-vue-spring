@@ -16,4 +16,9 @@ public class DocumentationController {
         return "/doc/task";
     }
 
+    @RequestMapping("/doc/product")
+    public String docProductShow() {
+        return "/doc/product";
+    }
+
 }

@@ -1,0 +1,397 @@
+= Shopping list vue spring app
+:doctype: book
+:icons: font
+:source-highlighter: highlightjs
+:toc:
+Introduction
+This is Spring REST Docs generated documentation for Shopping List Vue Spring App
+
+
+//************************ GET *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+
+= Product
+
+`ProductController` makes a call to a very simple service and produces five documentation snippets.
+
+== Read all products from single task
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/product/find-all-products-of-the-task/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/product/find-all-products-of-the-task/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/find-all-products-of-the-task/path-parameters.adoc[]
+
+=== Response
+
+HTTP response:
+
+include::{snippets}/v1/product/find-all-products-of-the-task/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/product/find-all-products-of-the-task/response-body.adoc[]
+
+Response Fields :
+include::{snippets}/v1/product/find-all-products-of-the-task/response-fields.adoc[]
+
+Response Headers :
+include::{snippets}/v1/product/find-all-products-of-the-task/response-headers.adoc[]
+
+=== Errors (unsuccessful calls)
+
+When a owner with the given identifier isn’t found, a 404 Not Found is provided, with a different response containing an error message.
+
+CURL request when you trying to get not existing owner.
+
+include::{snippets}/v1/product/find-all-products-should-return-error-if-owner-is-not-found/curl-request.adoc[]
+
+Http request when you trying to get not existing owner.
+
+include::{snippets}/v1/product/find-all-products-should-return-error-if-owner-is-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/find-all-products-should-return-error-if-owner-is-not-found/path-parameters.adoc[]
+
+HTTP response when owner is not found.
+include::{snippets}/v1/product/find-all-products-should-return-error-if-owner-is-not-found/http-response.adoc[]
+
+Response Body when owner is not found.
+include::{snippets}/v1/product/find-all-products-should-return-error-if-owner-is-not-found/response-body.adoc[]
+
+Response Fields when owner is not found.
+include::{snippets}/v1/product/find-all-products-should-return-error-if-owner-is-not-found/response-fields.adoc[]
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when task is not found:
+include::{snippets}/v1/product/find-all-products-should-return-error-if-task-is-not-found/response-body.adoc[]
+
+== Read single product
+
+=== Request
+
+When making a call to this API endpoint, the following request parameters and body can be expected.
+
+CURL request
+
+include::{snippets}/v1/product/find-one-product-should-return-product-dto/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/product/find-one-product-should-return-product-dto/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/find-one-product-should-return-product-dto/path-parameters.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/product/find-one-product-should-return-product-dto/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/product/find-one-product-should-return-product-dto/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/product/find-one-product-should-return-product-dto/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+When a product with the given identifier isn’t found, a 404 Not Found is provided, with a different response containing an error message.
+
+CURL request when you trying to get not existing product.
+
+include::{snippets}/v1/product/find-one-product-should-return-error-if-product-not-found/curl-request.adoc[]
+
+Http request when you trying to get not existing product.
+
+include::{snippets}/v1/product/find-one-product-should-return-error-if-product-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/find-one-product-should-return-error-if-product-not-found/path-parameters.adoc[]
+
+HTTP response when product is not found.
+include::{snippets}/v1/product/find-one-product-should-return-error-if-product-not-found/http-response.adoc[]
+
+Response Body when product is not found.
+include::{snippets}/v1/product/find-one-product-should-return-error-if-product-not-found/response-body.adoc[]
+
+Response Fields when product is not found.
+include::{snippets}/v1/product/find-one-product-should-return-error-if-product-not-found/response-fields.adoc[]
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when owner is not found:
+include::{snippets}/v1/product/find-one-product-should-return-error-if-owner-not-found/response-body.adoc[]
+
+Response when task is not found:
+include::{snippets}/v1/product/find-one-product-should-return-error-if-task-not-found/response-body.adoc[]
+
+//************************ POST *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+== Save product
+
+When making a call to this API endpoint, the following request parameters and body can be expected.
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/product/add-product-should-return-product-dto/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/product/add-product-should-return-product-dto/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/product/add-product-should-return-product-dto/request-body.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/product/add-product-should-return-product-dto/request-fields.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/product/add-product-should-return-product-dto/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/product/add-product-should-return-product-dto/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/product/add-product-should-return-product-dto/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+When a product name is empty (example ' ') then 400 Bad Request is provided.
+
+CURL request:
+
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-empty/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-empty/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-empty/request-body.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-empty/request-fields.adoc[]
+
+HTTP response:
+
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-empty/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-empty/response-body.adoc[]
+
+Response Fields :
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-empty/response-fields.adoc[]
+
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when product name is empty:
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-null/response-body.adoc[]
+
+Response when owner is not found:
+include::{snippets}/v1/product/add-product-should-return-error-when-owner-is-not-found/response-body.adoc[]
+
+Response when task is not found:
+include::{snippets}/v1/product/add-product-should-return-error-when-task-is-not-found/response-body.adoc[]
+
+Response when product name is to short:
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-too-short/response-body.adoc[]
+
+Response when product name is to long:
+include::{snippets}/v1/product/add-product-should-return-error-when-product-name-is-too-long/response-body.adoc[]
+
+//************************ PUT *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+== Update product
+
+When making a call to this API endpoint, the following request parameters and body can be expected.
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/product/update-product-should-return-product-dto/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/product/update-product-should-return-product-dto/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/product/update-product-should-return-product-dto/request-body.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/update-product-should-return-product-dto/path-parameters.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/product/update-product-should-return-product-dto/request-fields.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/product/update-product-should-return-product-dto/http-response.adoc[]
+
+Response Body (successful call):
+include::{snippets}/v1/product/update-product-should-return-product-dto/response-body.adoc[]
+
+Response Fields (successful call):
+include::{snippets}/v1/product/update-product-should-return-product-dto/response-fields.adoc[]
+
+=== Errors (unsuccessful calls)
+
+When a product with the given identifier isn’t found, a 404 Not Found is provided, with a different response containing an error message.
+
+CURL request:
+
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/http-request.adoc[]
+
+Request body:
+
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/request-body.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/path-parameters.adoc[]
+
+Request fields:
+
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/request-fields.adoc[]
+
+HTTP response:
+
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/response-body.adoc[]
+
+Response Fields :
+include::{snippets}/v1/product/update-product-should-return-error-when-product-is-not-found/response-fields.adoc[]
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when owner is not found:
+include::{snippets}/v1/product/update-product-should-return-error-when-owner-is-not-found/response-body.adoc[]
+
+Response when product name is empty:
+include::{snippets}/v1/product/update-product-should-return-error-when-product-name-is-empty/response-body.adoc[]
+
+Response when product name is null:
+include::{snippets}/v1/product/update-product-should-return-error-when-product-name-is-null/response-body.adoc[]
+
+Response when product name is too long:
+include::{snippets}/v1/product/update-product-should-return-error-when-product-name-is-too-long/response-body.adoc[]
+
+Response when product name is too short:
+include::{snippets}/v1/product/update-product-should-return-error-when-product-name-is-too-short/response-body.adoc[]
+
+Response when task is not found:
+include::{snippets}/v1/product/update-product-should-return-error-when-task-is-not-found/response-body.adoc[]
+
+
+//************************ DELETE *******************************
+//********************************************
+//**************************
+//**************
+//********
+//**
+
+== Delete product
+
+When making a call to this API endpoint, the following request parameters and body can be expected.
+
+=== Request
+
+CURL request
+
+include::{snippets}/v1/product/delete-product/curl-request.adoc[]
+
+HTTP request:
+
+include::{snippets}/v1/product/delete-product/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/delete-product/path-parameters.adoc[]
+
+=== Response
+
+HTTP response (successful call):
+
+include::{snippets}/v1/product/delete-product/http-response.adoc[]
+
+=== Errors (unsuccessful calls)
+
+Example of unsuccessful call -> when a owner with the given identifier isn’t found, a 404 Not Found is provided, with a different response containing an error message.
+
+CURL request when you trying to get not existing owner.
+
+include::{snippets}/v1/product/delete-product-should-return-error-if-owner-not-found/curl-request.adoc[]
+
+Http request:.
+
+include::{snippets}/v1/product/delete-product-should-return-error-if-owner-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/product/delete-product-should-return-error-if-owner-not-found/path-parameters.adoc[]
+
+HTTP response:
+include::{snippets}/v1/product/delete-product-should-return-error-if-owner-not-found/http-response.adoc[]
+
+Response Body:
+include::{snippets}/v1/product/delete-product-should-return-error-if-owner-not-found/response-body.adoc[]
+
+Response Fields:
+include::{snippets}/v1/product/delete-product-should-return-error-if-owner-not-found/response-fields.adoc[]
+
+Rest responses bodies which can occur when wrong api call is done:
+
+Response when task is not found:
+include::{snippets}/v1/product/delete-product-should-return-error-if-task-not-found/response-body.adoc[]
+
+Response when product is not found:
+include::{snippets}/v1/product/delete-product-should-return-error-if-product-not-found/response-body.adoc[]

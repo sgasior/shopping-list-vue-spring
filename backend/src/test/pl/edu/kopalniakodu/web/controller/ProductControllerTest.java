@@ -379,6 +379,7 @@ class ProductControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/product/{method-name}",
+                        productRequestFieldsSnippet(),
                         productPathParametersSnippet(),
                         snippets.apiError()));
     }
@@ -395,6 +396,7 @@ class ProductControllerTest {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$[*].message", hasItem(MESSAGE_NOT_BLANK_VALIDATION_EXCEPTION)))
                 .andDo(document("v1/product/{method-name}",
+                        productRequestFieldsSnippet(),
                         productPathParametersSnippet(),
                         snippets.apiError()));
     }
@@ -413,6 +415,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
                 .andDo(document("v1/product/{method-name}", productRequestFieldsSnippet(), snippets.apiError()))
                 .andDo(document("v1/product/{method-name}",
+                        productRequestFieldsSnippet(),
                         productPathParametersSnippet(),
                         snippets.apiError()));
     }
@@ -431,6 +434,7 @@ class ProductControllerTest {
                 .andExpect(jsonPath("$[*].message", hasItem("size must be between 3 and 50")))
                 .andDo(document("v1/product/{method-name}", productRequestFieldsSnippet(), snippets.apiError()))
                 .andDo(document("v1/product/{method-name}",
+                        productRequestFieldsSnippet(),
                         productPathParametersSnippet(),
                         snippets.apiError()));
     }
@@ -454,7 +458,10 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is(MESSAGE_TASK_NOT_FOUND_EXCEPTION)))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_TASK_NOT_FOUND_EXCEPTION)))
-                .andDo(document("v1/product/{method-name}", productRequestFieldsSnippet(), snippets.apiError()));
+                .andDo(document("v1/product/{method-name}",
+                        productRequestFieldsSnippet(),
+                        productPathParametersSnippet(),
+                        snippets.apiError()));
     }
 
     @Test
@@ -476,7 +483,10 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is(MESSAGE_OWNER_NOT_FOUND_EXCEPTION)))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_OWNER_NOT_FOUND_EXCEPTION)))
-                .andDo(document("v1/product/{method-name}", productRequestFieldsSnippet(), snippets.apiError()));
+                .andDo(document("v1/product/{method-name}",
+                        productRequestFieldsSnippet(),
+                        productPathParametersSnippet(),
+                        snippets.apiError()));
     }
 
     @Test
@@ -498,7 +508,10 @@ class ProductControllerTest {
                 .andExpect(status().isNotFound())
                 .andExpect(jsonPath("$.[0].message", is(MESSAGE_PRODUCT_NOT_FOUND_EXCEPTION)))
                 .andExpect(jsonPath("$.[0].codes", containsInAnyOrder(CODE_PRODUCT_NOT_FOUND_EXCEPTION)))
-                .andDo(document("v1/product/{method-name}", productRequestFieldsSnippet(), snippets.apiError()));
+                .andDo(document("v1/product/{method-name}",
+                        productRequestFieldsSnippet(),
+                        productPathParametersSnippet(),
+                        snippets.apiError()));
     }
 
 
