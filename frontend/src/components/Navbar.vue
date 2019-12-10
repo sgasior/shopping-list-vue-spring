@@ -1,7 +1,7 @@
 <template>
   <nav class="nav-extended">
     <div class="nav-wrapper">
-      <a href="#!" class="brand-logo center">Shopping list</a>
+      <a href="#!" class="brand-logo center">Shopping list {{isAddingTaskActually}}</a>
       <ul class="right" v-if="!this.ownerId">
         <li>
           <a
@@ -12,9 +12,11 @@
       </ul>
     </div>
     <div class="nav-content">
-      <a class="btn-floating btn-large waves-effect waves-light add-btn">
-        <i class="material-icons">add</i>
-      </a>
+      <router-link :to="{path:pathToAddTask}">
+        <a class="btn-floating btn-large waves-effect waves-light add-btn">
+          <i class="material-icons">add</i>
+        </a>
+      </router-link>
     </div>
   </nav>
 </template>
@@ -33,8 +35,19 @@ export default {
       EventBus.$emit("publish-task", "Piotr");
     }
   },
+  computed: {
+    pathToAddTask() {
+      if (this.ownerId == null) {
+        return "/add-task";
+      } else {
+        return `/owner/${this.ownerId}/add-task`;
+      }
+    }
+  },
   created() {
     this.ownerId = this.$route.params.ownerId;
+    this.isAddingTaskActually =
+      this.$router.currentRoute.name === "AddTaskWithOwnerId";
   }
 };
 </script>

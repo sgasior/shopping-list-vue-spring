@@ -1,18 +1,28 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Index from '@/components/Index'
+import AddTask from '@/components/AddTask'
 Vue.use(VueRouter)
 
-const routes = [
-  {
+const routes = [{
     path: '/',
     name: 'Index',
     component: Index
   },
   {
-    path: '/:ownerId',
+    path: '/owner/:ownerId',
     name: 'IndexWithOwnerId',
     component: Index
+  },
+  {
+    path: '/add-task',
+    name: 'AddTask',
+    component: AddTask
+  },
+  {
+    path: '/owner/:ownerId/add-task',
+    name: 'AddTaskWithOwnerId',
+    component: AddTask
   }
 ]
 
