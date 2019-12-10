@@ -50,6 +50,32 @@ include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-fields.adoc[]
 Response Headers :
 include::{snippets}/v1/task/find-all-tasks-of-the-owner/response-headers.adoc[]
 
+=== Errors (unsuccessful calls)
+
+When a owner with the given identifier isn’t found, a 404 Not Found is provided, with a different response containing an error message.
+
+CURL request when you trying to get not existing owner.
+
+include::{snippets}/v1/task/find-all-tasks-should-return-error-if-owner-is-not-found/curl-request.adoc[]
+
+Http request when you trying to get not existing owner.
+
+include::{snippets}/v1/task/find-all-tasks-should-return-error-if-owner-is-not-found/http-request.adoc[]
+
+Path parameters:
+
+include::{snippets}/v1/task/find-all-tasks-should-return-error-if-owner-is-not-found/path-parameters.adoc[]
+
+HTTP response when owner is not found.
+include::{snippets}/v1/task/find-all-tasks-should-return-error-if-owner-is-not-found/http-response.adoc[]
+
+Response Body when owner is not found.
+include::{snippets}/v1/task/find-all-tasks-should-return-error-if-owner-is-not-found/response-body.adoc[]
+
+Response Fields when owner is not found.
+include::{snippets}/v1/task/find-all-tasks-should-return-error-if-owner-is-not-found/response-fields.adoc[]
+
+
 == Read single task
 
 === Request
@@ -195,7 +221,7 @@ include::{snippets}/v1/task/add-task-should-return-error-when-owner-is-not-found
 Response when task title is to short:
 include::{snippets}/v1/task/add-task-should-return-error-when-task-is-to-short/response-body.adoc[]
 
-Response when owner is to long:
+Response when task title is to long:
 include::{snippets}/v1/task/add-task-should-return-error-when-task-is-to-long/response-body.adoc[]
 
 
@@ -356,5 +382,5 @@ include::{snippets}/v1/task/delete-task-should-return-error-if-owner-not-found/r
 
 Rest responses bodies which can occur when wrong api call is done:
 
-Response when owner is not found:
+Response when task is not found:
 include::{snippets}/v1/task/delete-task-should-return-error-if-task-not-found/response-body.adoc[]
