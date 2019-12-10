@@ -176,6 +176,7 @@ export default {
 }
 
 .card .card-content {
+  margin-bottom: 3rem;
   padding-left: 0;
   padding-right: 0;
 }
