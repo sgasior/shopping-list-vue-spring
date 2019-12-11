@@ -89,7 +89,7 @@ export default {
           task.taskNumber--;
         }
       });
-      if (this.paginatedData.length == 0) {
+      if (this.paginatedData.length == 0 && this.pageNumber > 1) {
         this.pageNumber--;
       }
     },
