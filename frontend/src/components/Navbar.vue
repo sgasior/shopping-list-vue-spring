@@ -1,7 +1,7 @@
 <template>
   <nav class="nav-extended">
     <div class="nav-wrapper">
-      <a href="#!" class="brand-logo center">Shopping list {{isAddingTaskActually}}</a>
+      <a href="#!" class="brand-logo center">Shopping list</a>
       <ul class="right" v-if="!this.ownerId">
         <li>
           <a
@@ -46,8 +46,11 @@ export default {
   },
   created() {
     this.ownerId = this.$route.params.ownerId;
-    this.isAddingTaskActually =
-      this.$router.currentRoute.name === "AddTaskWithOwnerId";
+  },
+  watch: {
+    $route(to, from) {
+      this.ownerId = this.$route.params.ownerId;
+    }
   }
 };
 </script>
