@@ -1,8 +1,10 @@
 <template>
   <nav class="nav-extended">
     <div class="nav-wrapper">
-      <a href="#!" class="brand-logo center">Shopping list</a>
-      <ul class="right" v-if="!this.ownerId">
+      <router-link :to="{name:indexRouteName}">
+        <a href="#!" class="brand-logo center">Shopping list</a>
+      </router-link>
+      <ul class="right" v-if="displayPublishButton">
         <li>
           <a
             class="waves-effect waves-light btn-large btn-publish"
@@ -42,6 +44,16 @@ export default {
       } else {
         return `/owner/${this.ownerId}/add-task`;
       }
+    },
+    indexRouteName() {
+      if (this.ownerId == null) {
+        return "Index";
+      } else {
+        return `IndexWithOwnerId`;
+      }
+    },
+    displayPublishButton() {
+      return this.$route.name == "Index";
     }
   },
   created() {

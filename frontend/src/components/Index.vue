@@ -215,7 +215,7 @@ div.card-title {
 }
 
 .delete:hover {
-  transform: scale(1.02);
+  transform: scale(1.1);
   opacity: 0.9;
 }
 
