@@ -62,7 +62,7 @@
         <a
           class="waves-effect waves-light btn-large btn-publish btn-add-task"
           v-bind:class="inputsAreValid ? '' :'disabled'"
-          @click="publishTask()"
+          @click="saveTask()"
         >Save Task</a>
       </form>
     </div>
@@ -70,6 +70,11 @@
 </template>
 
 <script>
+import { APIService } from "@/api/APIService";
+import { EventBus } from "../event-bus.js";
+
+const apiService = new APIService();
+
 export default {
   data() {
     return {
@@ -79,17 +84,51 @@ export default {
         minLen: 3,
         maxLen: 50
       },
-      allFieldsAreValid: false,
       task: {
         title: "",
         color: "#fffde1",
         minLen: 3,
         maxLen: 50
       },
-      error: null
+      error: null,
+      ownerId: null
     };
   },
   methods: {
+    async saveTask() {
+      if (this.ownerId == null) {
+        this.saveTaskLocally();
+        this.$router.push({ name: "IndexWithOwnerId" });
+      } else {
+        const savedTaskNumber = await apiService
+          .saveTaskInOwner(this.ownerId, {
+            taskTitle: this.task.title,
+            hexColor: this.task.color
+          })
+          .then(response => response.data.taskNumber);
+
+        for (let i = 0; i < this.products.length; i++) {
+          await apiService.saveProductInTask(
+            this.ownerId,
+            savedTaskNumber,
+            this.products[i]
+          );
+        }
+        this.$router.push({ name: "IndexWithOwnerId" });
+      }
+    },
+    saveTaskLocally() {
+      let productL = [];
+      this.products.forEach(product => {
+        productL.push(product.name);
+      });
+      let task = {
+        taskTitle: this.task.title,
+        hexColor: this.task.color,
+        productList: productL
+      };
+      EventBus.$emit("save-task", task);
+    },
     addProduct() {
       if (this.product.name == "") {
         this.error = "You must enter a product name before add";
@@ -135,6 +174,9 @@ export default {
         return "valid";
       }
     }
+  },
+  created() {
+    this.ownerId = this.$route.params.ownerId;
   },
   mounted() {
     M.AutoInit();

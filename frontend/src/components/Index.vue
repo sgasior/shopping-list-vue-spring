@@ -71,6 +71,11 @@ export default {
     Product
   },
   methods: {
+    addTaskLocally(task) {
+      //TODO
+      //console.log("inside index", task);
+      //this.taskList.push(task);
+    },
     deleteTask(taskNumber) {
       if (this.ownerId == null) {
         this.deleteTaskLocaly(taskNumber);
@@ -139,6 +144,9 @@ export default {
   created() {
     EventBus.$on("publish-task", name => {
       this.publishAllTasks(name);
+    });
+    EventBus.$on("save-task", task => {
+      this.addTaskLocally(task);
     });
     this.ownerId = this.$route.params.ownerId;
     if (this.ownerId != null) {
