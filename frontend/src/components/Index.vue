@@ -4,13 +4,13 @@
       <Search v-on:changeSearch="updateSearch($event)" />
       <div class="row">
         <div class="col s12 m4 l3" v-for="(task,index) in paginatedData" :key="index">
-          <div class="card">
+          <div class="card" v-bind:class="{'task-done': task.isDone}">
             <i class="material-icons delete" @click="deleteTask(task.taskNumber)">delete</i>
             <div class="card-content" :style="{backgroundColor: task.hexColor}">
               <span class="card-title center">{{task.taskTitle}}</span>
               <p class="task-date">Creation date: {{task.createdDate}}</p>
               <ul class="collection">
-                <Product :task="task" />
+                <Product :task="task" @updateProductDoneStatus="productStatusUpdated($event)" />
               </ul>
               <a class="btn-floating halfway-fab waves-effect waves-light edit-task">
                 <i class="material-icons">edit</i>
@@ -54,6 +54,7 @@ export default {
   },
   methods: {
     addTaskLocally(task) {
+      task.taskNumber = this.taskList.length + 1;
       this.taskList.push(task);
     },
     deleteTask(taskNumber) {
@@ -98,6 +99,15 @@ export default {
         name: "IndexWithOwnerId",
         params: { ownerId: ownerId }
       });
+    },
+    productStatusUpdated(taskNumber) {
+      let isTaskDone = true;
+      this.taskList[taskNumber - 1].productList.forEach(product => {
+        if (!product.isDone) {
+          isTaskDone = false;
+        }
+      });
+      this.taskList[taskNumber - 1].isDone = isTaskDone;
     },
     goToPageNumber(pageNumber) {
       this.pageNumber = pageNumber;
@@ -156,7 +166,7 @@ div.card-title {
 }
 
 .task-done {
-  text-decoration: line-through;
+  text-decoration: line-through !important;
 }
 
 .task-date {

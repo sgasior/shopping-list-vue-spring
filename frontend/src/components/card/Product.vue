@@ -3,7 +3,13 @@
     <li class="collection-item" v-for="(product,index) in task.productList" :key="index">
       <p>
         <label>
-          <input type="checkbox" class="filled-in" checked="checked" v-model="product.isDone" />
+          <input
+            type="checkbox"
+            class="filled-in"
+            checked="checked"
+            v-model="product.isDone"
+            @change="updateDoneStatus(task.taskNumber)"
+          />
           <span>{{product.name}}</span>
         </label>
       </p>
@@ -25,6 +31,11 @@ export default {
   },
   props: {
     task: Object
+  },
+  methods: {
+    updateDoneStatus(taskNumber) {
+      this.$emit("updateProductDoneStatus", taskNumber);
+    }
   },
   created() {
     this.ownerId = this.$route.params.ownerId;

@@ -135,7 +135,8 @@ export default {
           .padStart(2, "0")}.${dt
           .getMinutes()
           .toString()
-          .padStart(2, "0")}`
+          .padStart(2, "0")}`,
+        isDone: false
       };
       EventBus.$emit("save-task", task);
     },
@@ -161,7 +162,7 @@ export default {
         return "";
       }
       if (
-        taskToCheck.title.length < this.task.minLen ||
+        taskToCheck.title.trim().length < this.task.minLen ||
         taskToCheck.title.length > this.task.maxLen
       ) {
         return "invalid";
@@ -177,7 +178,7 @@ export default {
         return "";
       }
       if (
-        prodToCheck.name.length < this.product.minLen ||
+        prodToCheck.name.trim().length < this.product.minLen ||
         prodToCheck.name.length > this.product.maxLen
       ) {
         return "invalid";
@@ -200,7 +201,7 @@ export default {
     },
     inputsAreValid() {
       if (
-        this.task.title.length < this.task.minLen ||
+        this.task.title.trim().length < this.task.minLen ||
         this.task.title.length > this.task.maxLen ||
         this.task.title == null ||
         this.products.length == 0
@@ -209,7 +210,7 @@ export default {
       }
       for (let i = 0; i < this.products.length; i++) {
         if (
-          this.products[i].name.length < this.product.minLen ||
+          this.products[i].name.trim().length < this.product.minLen ||
           this.products[i].name.length > this.product.maxLen ||
           this.products[i].name == null
         ) {
