@@ -1,7 +1,14 @@
 <template>
   <div id="app">
     <Navbar />
-    <router-view/>
+    <template v-if="ownerId==null">
+      <keep-alive include="Index">
+        <router-view />
+      </keep-alive>
+    </template>
+    <template v-else>
+      <router-view />
+    </template>
     <Footer />
   </div>
 </template>
@@ -12,10 +19,23 @@ import Index from "@/components/Index";
 import Footer from "@/components/Footer";
 export default {
   name: "App",
+  data() {
+    return {
+      ownerId: null
+    };
+  },
   components: {
     Navbar,
     Index,
     Footer
+  },
+  created() {
+    this.ownerId = this.$route.params.ownerId;
+  },
+  watch: {
+    $route(to, from) {
+      this.ownerId = this.$route.params.ownerId;
+    }
   }
 };
 </script>

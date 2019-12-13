@@ -24,7 +24,6 @@
         :pageCount="pageCount"
         :pageNumber="pageNumber"
       />
-      <button @click="test()">New item</button>
     </div>
   </main>
 </template>
@@ -42,24 +41,7 @@ export default {
   data() {
     return {
       search: "",
-      taskList: [
-        // {
-        //   createdDate: "2019-12-03 16.11",
-        //   isDone: false,
-        //   taskNumber: 3,
-        //   taskTitle: "Zakupy testowe",
-        //   productList: [
-        //     {
-        //       name: "Kukurydza",
-        //       isDone: true
-        //     },
-        //     {
-        //       name: "Pepsi",
-        //       isDone: false
-        //     }
-        //   ]
-        // }
-      ],
+      taskList: [],
       ownerId: null,
       pageNumber: 1,
       maxTasksPerPage: 8
@@ -72,9 +54,7 @@ export default {
   },
   methods: {
     addTaskLocally(task) {
-      //TODO
-      //console.log("inside index", task);
-      //this.taskList.push(task);
+      this.taskList.push(task);
     },
     deleteTask(taskNumber) {
       if (this.ownerId == null) {
@@ -121,24 +101,6 @@ export default {
     },
     goToPageNumber(pageNumber) {
       this.pageNumber = pageNumber;
-    },
-    test() {
-      this.taskList.push({
-        createdDate: "2019-12-03 16.11",
-        isDone: false,
-        taskNumber: 3,
-        taskTitle: "Zakupy testowe",
-        productList: [
-          {
-            name: "Kukurydza",
-            isDone: true
-          },
-          {
-            name: "Pepsi",
-            isDone: false
-          }
-        ]
-      });
     }
   },
   created() {

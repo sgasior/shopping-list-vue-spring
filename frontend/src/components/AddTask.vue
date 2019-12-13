@@ -82,7 +82,8 @@ export default {
       product: {
         name: "",
         minLen: 3,
-        maxLen: 50
+        maxLen: 50,
+        isDone: false
       },
       task: {
         title: "",
@@ -98,7 +99,7 @@ export default {
     async saveTask() {
       if (this.ownerId == null) {
         this.saveTaskLocally();
-        this.$router.push({ name: "IndexWithOwnerId" });
+        this.$router.push({ name: "Index" });
       } else {
         const savedTaskNumber = await apiService
           .saveTaskInOwner(this.ownerId, {
@@ -118,14 +119,23 @@ export default {
       }
     },
     saveTaskLocally() {
-      let productL = [];
-      this.products.forEach(product => {
-        productL.push(product.name);
-      });
+      var dt = new Date();
       let task = {
         taskTitle: this.task.title,
         hexColor: this.task.color,
-        productList: productL
+        productList: this.products,
+        createdDate: `${dt
+          .getFullYear()
+          .toString()
+          .padStart(4, "0")}-${(dt.getMonth() + 1)
+          .toString()
+          .padStart(2, "0")}-${dt.getDate().toString()} ${dt
+          .getHours()
+          .toString()
+          .padStart(2, "0")}.${dt
+          .getMinutes()
+          .toString()
+          .padStart(2, "0")}`
       };
       EventBus.$emit("save-task", task);
     },
@@ -135,6 +145,7 @@ export default {
       } else {
         let prod = {};
         prod.name = this.product.name;
+        prod.isDone = this.product.isDone;
         this.products.push(prod);
         this.product.name = "";
         this.error = null;
