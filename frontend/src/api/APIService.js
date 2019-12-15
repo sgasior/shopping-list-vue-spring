@@ -48,6 +48,29 @@ export class APIService {
         });
     }
 
+    async updateTask(ownerId, taskNumber, updatedTask) {
+        console.log(ownerId);
+        console.log(taskNumber);
+        console.log(updatedTask);
+        const url = `/api/v1/owner/${ownerId}/task/${taskNumber}`;
+        return axios.put(url, {
+            taskTitle: updatedTask.title,
+            hexColor: updatedTask.color,
+            isDone: updatedTask.isDone
+        });
+    }
 
+    async updateProduct(ownerId, taskNumber, updatedProduct, productNumber) {
+        const url = `/api/v1/owner/${ownerId}/task/${taskNumber}/product/${productNumber}`;
+        return axios.put(url, {
+            name: updatedProduct.name,
+            isDone: updatedProduct.isDone
+        });
+    }
+
+    deleteProduct(ownerId, taskNumber, productNumber) {
+        const url = `/api/v1/owner/${ownerId}/task/${taskNumber}/product/${productNumber}`;
+        return axios.delete(url);
+    }
 
 }

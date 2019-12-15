@@ -8,7 +8,7 @@
             class="filled-in"
             checked="checked"
             v-model="product.isDone"
-            @change="updateDoneStatus(task.taskNumber)"
+            @change="updateDoneStatus(task.taskNumber, product)"
           />
           <span>{{product.name}}</span>
         </label>
@@ -33,7 +33,15 @@ export default {
     task: Object
   },
   methods: {
-    updateDoneStatus(taskNumber) {
+    updateDoneStatus(taskNumber, product) {
+      if (this.ownerId != null) {
+        apiService.updateProduct(
+          this.ownerId,
+          taskNumber,
+          product,
+          product.productNumber
+        );
+      }
       this.$emit("updateProductDoneStatus", taskNumber);
     }
   },

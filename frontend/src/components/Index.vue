@@ -12,9 +12,14 @@
               <ul class="collection">
                 <Product :task="task" @updateProductDoneStatus="productStatusUpdated($event)" />
               </ul>
-              <a class="btn-floating halfway-fab waves-effect waves-light edit-task">
-                <i class="material-icons">edit</i>
-              </a>
+              <router-link
+                :to="{ path:`${pathToEditTask}/${task.taskNumber}`}"
+                @click.native="emitTask(task)"
+              >
+                <a class="btn-floating halfway-fab waves-effect waves-light edit-task">
+                  <i class="material-icons">edit</i>
+                </a>
+              </router-link>
             </div>
           </div>
         </div>
@@ -56,6 +61,12 @@ export default {
     addTaskLocally(task) {
       task.taskNumber = this.taskList.length + 1;
       this.taskList.push(task);
+    },
+    updateTaskLocally(task) {
+      console.log(task);
+      this.taskList[task.taskNumber - 1].hexColor = task.hexColor;
+      this.taskList[task.taskNumber - 1].taskTitle = task.taskTitle;
+      this.taskList[task.taskNumber - 1].productList = task.productList;
     },
     deleteTask(taskNumber) {
       if (this.ownerId == null) {
@@ -108,9 +119,19 @@ export default {
         }
       });
       this.taskList[taskNumber - 1].isDone = isTaskDone;
+      if (this.ownerId != null) {
+        apiService.updateTask(this.ownerId, taskNumber, {
+          title: this.taskList[taskNumber - 1].taskTitle,
+          color: this.taskList[taskNumber - 1].hexColor,
+          isDone: this.taskList[taskNumber - 1].isDone
+        });
+      }
     },
     goToPageNumber(pageNumber) {
       this.pageNumber = pageNumber;
+    },
+    emitTask(task) {
+      EventBus.$emit("emit-task", task);
     }
   },
   created() {
@@ -119,6 +140,9 @@ export default {
     });
     EventBus.$on("save-task", task => {
       this.addTaskLocally(task);
+    });
+    EventBus.$on("update-task", task => {
+      this.updateTaskLocally(task);
     });
     this.ownerId = this.$route.params.ownerId;
     if (this.ownerId != null) {
@@ -142,6 +166,13 @@ export default {
       const start = (this.pageNumber - 1) * this.maxTasksPerPage,
         end = start + this.maxTasksPerPage;
       return this.filteredTaskList.slice(start, end);
+    },
+    pathToEditTask() {
+      if (this.ownerId == null) {
+        return "/edit-task";
+      } else {
+        return `/owner/${this.ownerId}/edit-task`;
+      }
     }
   }
 };

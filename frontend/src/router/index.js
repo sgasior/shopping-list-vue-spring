@@ -2,6 +2,7 @@ import Vue from 'vue'
 import VueRouter from 'vue-router'
 import Index from '@/components/Index'
 import AddTask from '@/components/AddTask'
+import EditTask from '@/components/EditTask'
 Vue.use(VueRouter)
 
 const routes = [{
@@ -23,6 +24,16 @@ const routes = [{
     path: '/owner/:ownerId/add-task',
     name: 'AddTaskWithOwnerId',
     component: AddTask
+  },
+  {
+    path: '/edit-task/:taskNumber',
+    name: 'EditTask',
+    component: EditTask
+  },
+  {
+    path: '/owner/:ownerId/edit-task/:taskNumber',
+    name: 'EditTaskWithOwnerId',
+    component: EditTask
   }
 ]
 
