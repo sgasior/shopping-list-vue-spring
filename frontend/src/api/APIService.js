@@ -49,9 +49,6 @@ export class APIService {
     }
 
     async updateTask(ownerId, taskNumber, updatedTask) {
-        console.log(ownerId);
-        console.log(taskNumber);
-        console.log(updatedTask);
         const url = `/api/v1/owner/${ownerId}/task/${taskNumber}`;
         return axios.put(url, {
             taskTitle: updatedTask.title,

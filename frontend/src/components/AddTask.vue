@@ -21,13 +21,13 @@
             <option value="#f6fea1">
               <span class="box box2"></span>
             </option>
-            <option value="#ffb270">
+            <option value="#f4f4f4">
               <span class="box box3"></span>
             </option>
             <option value="#e6f7f7">
               <span class="box box4"></span>
             </option>
-            <option value="#f7beff">
+            <option value="#fce2ff">
               <span class="box box5"></span>
             </option>
           </select>
@@ -349,7 +349,7 @@ export default {
 }
 
 .box3 {
-  background-color: #ffb270;
+  background-color: #f4f4f4;
 }
 
 .box4 {
@@ -357,13 +357,6 @@ export default {
 }
 
 .box5 {
-  background-color: #f7beff;
+  background-color: #fce2ff;
 }
-
-/* colors: */
-/* fffde1 */
-/* f6fea1 */
-/* ffb270 */
-/* e6f7f7 */
-/* f7beff */
 </style>

@@ -63,7 +63,6 @@ export default {
       this.taskList.push(task);
     },
     updateTaskLocally(task) {
-      console.log(task);
       this.taskList[task.taskNumber - 1].hexColor = task.hexColor;
       this.taskList[task.taskNumber - 1].taskTitle = task.taskTitle;
       this.taskList[task.taskNumber - 1].productList = task.productList;
